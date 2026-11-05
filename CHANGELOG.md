@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## 0.2.2
+
+修一个会让插件**完全不激活**的启动期崩溃。真实报错：
+
+```
+dsh: warning: 1 entry did not activate xianshou (dsh-plugin-xianshou):
+Error: cannot get property "version" without inject
+```
+
+### 原因
+
+Cordis 的 Context 是 Proxy：**读取未在 `inject` 里声明的服务属性会直接抛错**。
+`detectHostVersion()` 写的是 `ctx.version` / `ctx.app` / `ctx.harness` 这类"猜着读"，
+而它又是 `apply()` 的第一行 —— 抛一次，整个插件（含九个工具与闸门）全部不激活。
+用普通对象做假 ctx 的测试永远发现不了这个，因为普通对象不抛。
+
+### 修复
+
+- 所有宿主探测改为「容错读属性 + `ctx.get(name)`」双路径，任何一条抛错都吞掉：
+  - `propOf()` / `methodOf()` 内部 try/catch，永不抛
+  - 新增 `safeGet(ctx, name)`，走 `ctx.get()` 且兜住异常
+  - `readHost()` 不再直接 `record[name]`
+- 探测顺序：先读属性（已 inject 的服务直接可读），再退回 `ctx.get()`。反过来会把 `tools` 误认成别的服务。
+- 版本读不到时回落基线 `0.2.1-rc.1` 并输出告警，可用环境变量 `DSH_VERSION` 覆盖。
+- 客户端半边同类问题一并修掉：`ctx.config` / `ctx.permissions` / `ctx.xianshouFeed` / `ctx.on` 全部经 `safeRead` / `safeCall`，避免面板白屏。
+
+### 测试
+
+- 新增 `test/cordis.contract.test.js`（7 条）：用**严格 Proxy** 复现 Cordis 语义（读未注入属性即抛错），
+  断言插件在严格上下文下仍能挂载、九个工具齐全、版本可回落、`get` 抛错也能活。
+- 客户端新增 3 条同类断言（apply 不抛、权限回落只读、渲染不白屏）。
+- 累计 127 个用例。
+
 ## 0.2.1
 
 修"装上但侧边栏没有入口"这一类问题。两处是 0.2.0 的实现缺陷，不是配置问题。

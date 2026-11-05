@@ -6,7 +6,16 @@
  * 内部实现（具体工具类、适配器细节）不做默认导出，避免被当成稳定契约。
  */
 
-export { apply, mount, name, inject, detectHostVersion, type PluginRuntime, type MountOptions } from './plugin.js';
+export {
+  apply,
+  mount,
+  name,
+  inject,
+  detectHostVersion,
+  VERSION_FALLBACK,
+  type PluginRuntime,
+  type MountOptions,
+} from './plugin.js';
 
 export { ConfigParser, DEFAULT_CONFIG, ENGINE_RANGE, type XianshouConfig } from './config.js';
 

@@ -24,7 +24,7 @@ const h = React.createElement;
 
 const PANEL_ID = 'xianshou';
 const PLUGIN_TAG = 'dsh-plugin-xianshou';
-const PACKAGE_VERSION = '0.2.1';
+const PACKAGE_VERSION = '0.2.2';
 
 /** 权限点。宿主权限服务存在时按这两个 key 判定；不存在时按只读降级。 */
 const PERMISSIONS = Object.freeze({ view: 'xianshou.view', operate: 'xianshou.operate' });
@@ -85,6 +85,29 @@ const FEED_EVENTS = Object.freeze([
 function pct(value) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return '—';
   return `${Math.round(value * 100)}%`;
+}
+
+/**
+ * 容错读：客户端的 ctx 也是 Cordis 上下文，未 inject 的服务属性会抛异常。
+ * 面板里任何"猜着读"的地方都必须经过它，否则一次异常就是白屏。
+ */
+function safeRead(target, key) {
+  if (!target) return undefined;
+  try {
+    return target[key];
+  } catch {
+    return undefined;
+  }
+}
+
+function safeCall(ctx, key, ...args) {
+  const fn = safeRead(ctx, key);
+  if (typeof fn !== 'function') return undefined;
+  try {
+    return fn.apply(ctx, args);
+  } catch {
+    return undefined;
+  }
 }
 
 function parseQuery(raw) {
@@ -149,14 +172,7 @@ function formatRoute(route) {
  */
 function pickPermissionService(ctx) {
   if (!ctx) return null;
-  const candidates = [ctx.permissions];
-  if (typeof ctx.get === 'function') {
-    try {
-      candidates.push(ctx.get('permissions'));
-    } catch {
-      /* 探测失败按不存在处理 */
-    }
-  }
+  const candidates = [safeCall(ctx, 'get', 'permissions'), safeRead(ctx, 'permissions')];
   for (const candidate of candidates) {
     if (candidate && typeof candidate.has === 'function') return candidate;
   }
@@ -447,7 +463,7 @@ function createFeed(ctx, options) {
     injected.push = (event) => ingest(event);
   }
 
-  const feedService = ctx && ctx.xianshouFeed;
+  const feedService = safeRead(ctx, 'xianshouFeed');
   if (feedService && typeof feedService.subscribe === 'function') {
     try {
       const off = feedService.subscribe((event) => ingest(event));
@@ -458,14 +474,10 @@ function createFeed(ctx, options) {
     }
   }
 
-  if (source === 'none' && ctx && typeof ctx.on === 'function') {
+  if (source === 'none' && typeof safeRead(ctx, 'on') === 'function') {
     FEED_EVENTS.forEach((type) => {
-      try {
-        const off = ctx.on(type, (payload) => ingest({ type, payload }));
-        if (typeof off === 'function') disposers.push(off);
-      } catch {
-        /* 某个事件名不被支持时不影响其他事件 */
-      }
+      const off = safeCall(ctx, 'on', type, (payload) => ingest({ type, payload }));
+      if (typeof off === 'function') disposers.push(off);
     });
     source = 'broadcast';
   }
@@ -1508,7 +1520,7 @@ const name = 'xianshou-console';
 const inject = ['slots'];
 
 function apply(ctx) {
-  const options = (ctx && ctx.config) || {};
+  const options = safeRead(ctx, 'config') || {};
   const access = resolveAccess(ctx, options);
   if (access.level === 'hidden') {
     // 只有显式配置才隐藏入口。自动探测到的"拒绝"仍然注册，原因见 resolveAccess 的注释。

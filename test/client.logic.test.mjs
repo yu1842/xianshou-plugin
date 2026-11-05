@@ -272,3 +272,49 @@ test('包声明：双面导出与 client 平台声明就位', () => {
   assert.ok(pkg.files.includes('client'));
   assert.ok(pkg.exports['.'], '宿主半边不能被删掉');
 });
+
+// ── Cordis 严格上下文 ─────────────────────────────────
+
+/** 复现 Cordis 语义：读未 inject 的属性会抛错。 */
+function strictCtx(base) {
+  const allowed = new Set(Object.keys(base));
+  return new Proxy(base, {
+    get(target, key) {
+      if (key === 'then') return undefined;
+      if (typeof key === 'symbol') return target[key];
+      if (allowed.has(key)) return target[key];
+      throw new Error(`cannot get property "${String(key)}" without inject`);
+    },
+    has() {
+      return true;
+    },
+  });
+}
+
+test('客户端：严格上下文下 apply 不抛（探测 config / permissions 都要容错）', () => {
+  const registrations = [];
+  const base = {
+    slots: {
+      inject(_slot, factory) {
+        factory();
+        return () => {};
+      },
+      register(options, component) {
+        registrations.push({ options, component });
+        return () => {};
+      },
+    },
+    get: () => undefined,
+  };
+  const ctx = strictCtx(base);
+  assert.throws(() => ctx.config, /without inject/, '先证明这个假 ctx 确实会抛');
+  assert.doesNotThrow(() => client.apply(ctx));
+  assert.equal(registrations.length, 2);
+});
+
+test('客户端：严格上下文下权限探测回落为只读，而不是崩溃', () => {
+  const base = { get: () => undefined };
+  const access = resolveAccess(strictCtx(base));
+  assert.equal(access.level, 'view');
+  assert.equal(access.source, 'default');
+});

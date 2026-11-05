@@ -41,7 +41,7 @@ test('渲染：面板骨架包含标题、八个模块入口与页脚状态', ()
     assert.ok(html.includes(module.label), `缺少模块入口：${module.label}`);
   }
   assert.match(html, /class="xs-foot"/);
-  assert.match(html, /v0\.2\.1/);
+  assert.match(html, /v0\.2\.2/);
 });
 
 test('渲染：概览页展示真实计数，不使用占位数字', () => {
@@ -165,4 +165,19 @@ test('渲染：有数据时每个模块也不出现 NaN / undefined', () => {
     assert.ok(!html.includes('NaN'), `${module.id} 出现 NaN`);
     assert.ok(!html.includes('undefined'), `${module.id} 出现 undefined`);
   }
+});
+
+test('渲染：严格 Cordis 上下文下不白屏（ctx 属性读取会抛，面板仍要出骨架）', () => {
+  const base = { get: () => undefined };
+  const ctx = new Proxy(base, {
+    get(target, key) {
+      if (key === 'then') return undefined;
+      if (typeof key === 'symbol') return target[key];
+      if (key in target) return target[key];
+      throw new Error(`cannot get property "${String(key)}" without inject`);
+    },
+  });
+  const html = renderToStaticMarkup(h(ConsolePage, { ctx, feedOptions: { initialEvents: [] } }));
+  assert.match(html, /先手协议/);
+  assert.match(html, /数据源未连接/, '探测全部失败时应落到"未连接"，而不是抛错');
 });

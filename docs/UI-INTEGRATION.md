@@ -291,6 +291,9 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3080/plugins/xianshou/
 Cordis 的依赖注入规则是"服务不到、插件不加载"，而且**不报错**。Console 里看 `[xianshou]` 相关输出：
 
 - 有 `控制台入口未注册：…` → 被 `access: "hidden"` 显式关掉了，改配置。
+- 有 `cannot get property "x" without inject` → 插件在**启动期**读了没 inject 的服务属性。
+  Cordis 的 Context 是 Proxy，这种读取会直接抛错并让整个 entry 不激活（连带九个工具一起消失）。
+  0.2.2 已修（全部探测改为容错读 + `ctx.get()`），升级即可；自己写插件时同理：**不要猜着读 `ctx.xxx`，要读就用 `ctx.get('xxx')` 或先 inject**。
 - 什么都没有 → 大概率卡在 `inject = ['slots']`：`slots` 服务没就绪。确认装的是 web profile，且宿主 ≥ 0.2.1-rc.1（更早版本没有槽位系统）。
 - 有 `ReferenceError` / `TypeError` → 半边代码在真实环境里抛错，把首行错误贴进 issue。
 

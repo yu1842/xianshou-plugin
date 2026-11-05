@@ -21,7 +21,7 @@ import { GateCapability } from './capabilities/GateCapability.js';
 import { ToolsetCapability } from './capabilities/ToolsetCapability.js';
 import { ReminderCapability } from './capabilities/ReminderCapability.js';
 import type { Capability, CapabilityReport } from './capabilities/Capability.js';
-import { methodOf, propOf } from './adapters/harness/probe.js';
+import { methodOf, propOf, safeGet } from './adapters/harness/probe.js';
 
 /**
  * 组合根（Composition Root）
@@ -63,19 +63,32 @@ export interface MountOptions {
 
 const CAPABILITIES: readonly Capability[] = [new GateCapability(), new ToolsetCapability(), new ReminderCapability()];
 
-/** 宿主版本探测：不同 profile 暴露的位置不同，按可靠性从高到低试探。 */
+/** 版本探测失败时的基线。取 engines.dsh 的下界，最保守。 */
+export const VERSION_FALLBACK = '0.2.1-rc.1';
+
+/**
+ * 宿主版本探测
+ *
+ * 注意：**不能用 `ctx.version` 这种直接属性访问**。Cordis 的 Context 是 Proxy，
+ * 读取未 inject 的服务属性会抛 `cannot get property "version" without inject`，
+ * 而这个函数在 apply 的最前面执行 —— 抛一次就等于整个插件没激活。
+ * 因此全部走 ctx.get()（可选服务的官方姿势）+ 容错读属性。
+ */
 export function detectHostVersion(ctx: unknown): string {
   const candidates: unknown[] = [
-    propOf(ctx, 'version'),
-    propOf(propOf(ctx, 'dsh'), 'version'),
-    propOf(propOf(ctx, 'harness'), 'version'),
-    propOf(propOf(ctx, 'app'), 'version'),
     typeof process !== 'undefined' ? process.env['DSH_VERSION'] : undefined,
+    // 两条路径都试，顺序无关紧要，但不能只留一条
+    propOf(ctx, 'version'),
+    safeGet(ctx, 'version'),
+    propOf(propOf(ctx, 'app'), 'version'),
+    propOf(safeGet(ctx, 'app'), 'version'),
+    propOf(safeGet(ctx, 'harness'), 'version'),
+    propOf(safeGet(ctx, 'dsh'), 'version'),
   ];
   for (const candidate of candidates) {
     if (typeof candidate === 'string' && /^\d+\.\d+\.\d+/.test(candidate)) return candidate;
   }
-  return '0.2.1-rc.1';
+  return VERSION_FALLBACK;
 }
 
 export function apply(ctx: unknown, config?: unknown): void {
@@ -90,6 +103,12 @@ export function mount(options: MountOptions): PluginRuntime {
   const config = parsed.config;
 
   const version = detectHostVersion(options.ctx);
+  if (version === VERSION_FALLBACK) {
+    logger.warn('[xianshou] 未能从宿主读到版本号（服务需 inject 才可直接读），按基线版本处理', {
+      version,
+      hint: '可用环境变量 DSH_VERSION 覆盖，或在报告问题时附上宿主版本',
+    });
+  }
   const gate = new VersionGate({ engineRange: config.compat.engineRange, allowUnverified: config.compat.allowUnverified });
   const gateResult = gate.assertOrThrow(version, logger);
 
