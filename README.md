@@ -61,6 +61,24 @@ dsh --profile xs-test --dump-config | grep -A5 xianshou
 
 ---
 
+## 控制台（Web 端入口）
+
+插件是双面包：宿主半边提供工具与闸门，客户端半边在 DSH 侧边栏挂一个「先手协议」入口，点开是一个整页面板。
+
+- **入口**：`sidebar.panellist`，`order=1`，门框图标，随宿主主题变色；面板注册在 `main`（键控槽位，`key` 必须与入口 `id` 严格相等）
+- **八个模块**：概览 / 任务台账 / 先手闸门 / 留痕账本 / 回收队列 / 拒绝率 / 健康度 / 设置
+- **权限**：`xianshou.view` 决定入口是否注册，`xianshou.operate` 决定写操作是否可用；宿主没提供权限服务时按只读降级并在界面说明
+- **路由**：面板内 hash 路由（`#xianshou/tasks/xs-7f21?zone=red`），刷新与前进后退都成立 —— 用 hash 是因为 DSH 前端对未知路径返回 404，不做 history fallback
+- **响应式**：900 px 导航转横排、560 px 卡片两列；不使用 `:has()` / 容器查询 / `fixed` 定位
+
+想看六种宽度下的真实渲染：
+
+```bash
+npm run preview     # 生成 docs/console-preview.html
+```
+
+细节（槽位契约、权限判定顺序、路由表、浏览器清单、限制）见 [`docs/UI-INTEGRATION.md`](docs/UI-INTEGRATION.md)。
+
 ## 架构一图
 
 ```
@@ -109,11 +127,12 @@ npm run test:report    # 重新生成 docs/COMPATIBILITY-REPORT.md
 
 ```bash
 npm run build        # tsc → dist/
-npm test             # 构建 + 生成令牌 + 全量测试（70 个用例）
+npm test             # 构建 + 生成令牌 + 全量测试（115 个用例）
 npm run test:compat  # 兼容矩阵
 npm run test:report  # 生成兼容性报告
 npm run tokens       # 重新导出设计令牌 CSS
 npm run sample       # 重新生成卡片样例
+npm run preview      # 重新生成控制台响应式对照页
 ```
 
 ```
@@ -126,7 +145,8 @@ src/
 ├── capabilities/      闸门 / 工具集 / 提醒
 ├── adapters/          宿主版本适配、存储四实现、通知、日志、工具定义编码
 └── ui/                卡片 IR、令牌、主题、渲染器、六类视图
-test/                  领域 / 版本 / 集成 / 存储 / UI / 兼容矩阵
+client/                客户端半边：侧边栏入口 + 整页面板（单文件 CJS）
+test/                  领域 / 版本 / 集成 / 存储 / UI / 兼容矩阵 / 客户端
 docs/                  架构、UI 规范、使用说明、兼容性、报告、样例
 ```
 

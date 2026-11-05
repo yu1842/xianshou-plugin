@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-xianshou",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "先手协议 · 防认知债插件 for DeepSeek Harness —— 限制 AI 介入时点，不限制使用剂量",
   "license": "MIT",
   "type": "module",
@@ -10,13 +10,15 @@
       "types": "./dist/plugin.d.ts",
       "import": "./dist/plugin.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./client": "./client/client.cjs"
   },
   "files": [
     "dist",
     "dsh.patch.yml",
     "docs",
-    "README.md"
+    "README.md",
+    "client"
   ],
   "engines": {
     "dsh": ">=0.2.1-rc.1 <0.3.0",
@@ -25,6 +27,10 @@
   "dsh": {
     "bundle": {
       "patch": "./dsh.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": []
     }
   },
   "keywords": [
@@ -37,16 +43,19 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
-    "test": "npm run build && npm run tokens && node --test \"test/*.test.js\"",
+    "test": "npm run build && npm run tokens && node --test \"test/*.test.js\" \"test/*.test.mjs\"",
     "test:compat": "npm run build && node --test \"test/compat.matrix.test.js\"",
     "test:report": "node scripts/compat-report.mjs",
     "tokens": "npm run build && node scripts/gen-tokens.mjs",
     "sample": "npm run build && node scripts/sample-output.mjs",
     "prepublishOnly": "npm run build && npm test",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "preview": "npm run build && node scripts/console-preview.mjs"
   },
   "devDependencies": {
-    "typescript": "^5.6.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.6.0"
   }
 }

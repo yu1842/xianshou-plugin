@@ -16,8 +16,15 @@ import { isDue, isOverdue, type RecallGate } from '../domain/recall.js';
  */
 
 export type DomainEvent =
-  | { readonly type: 'task.created'; readonly taskId: TaskId; readonly zone: Zone }
-  | { readonly type: 'task.saved'; readonly taskId: TaskId; readonly zone: Zone; readonly hasDraft: boolean; readonly status: string }
+  | { readonly type: 'task.created'; readonly taskId: TaskId; readonly zone: Zone; readonly title: string }
+  | {
+      readonly type: 'task.saved';
+      readonly taskId: TaskId;
+      readonly zone: Zone;
+      readonly hasDraft: boolean;
+      readonly status: string;
+      readonly title: string;
+    }
   | { readonly type: 'draft.accepted'; readonly taskId: TaskId; readonly chars: number }
   | { readonly type: 'segment.marked'; readonly taskId: TaskId; readonly tag: string; readonly aiRatio: number }
   | { readonly type: 'task.delivered'; readonly taskId: TaskId; readonly gates: readonly Iso8601[] }
@@ -106,7 +113,7 @@ export class TaskService {
       this.#deps.policy,
     );
     await this.save(task);
-    this.#deps.events?.publish({ type: 'task.created', taskId: task.id, zone: decision.zone });
+    this.#deps.events?.publish({ type: 'task.created', taskId: task.id, zone: decision.zone, title: task.title });
     this.#deps.logger.info('[xianshou] 任务创建', { id: task.id, zone: decision.zone, rule: decision.ruleId });
     return { task, decision };
   }
@@ -127,6 +134,7 @@ export class TaskService {
       zone: task.zone,
       hasDraft: task.hasDraft,
       status: task.status,
+      title: task.title,
     });
   }
 
