@@ -7,6 +7,7 @@ import type { ToolViews } from '../application/views.js';
 import type { LedgerPolicy } from '../domain/ledger.js';
 import type { ArtifactStore, Hasher } from '../ports/artifacts.js';
 import type { DocumentStore } from '../ports/documents.js';
+import type { GuideService } from '../application/GuideService.js';
 
 /**
  * 能力（Capability）
@@ -35,6 +36,7 @@ export interface CapabilityServices {
   readonly hasher: Hasher;
   readonly pluginVersion: string;
   readonly documents: DocumentStore;
+  readonly guide: GuideService;
 }
 
 export interface CapabilityContext {

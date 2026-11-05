@@ -72,10 +72,14 @@ try {
 if (client) {
   if (typeof client.apply === 'function') ok('导出 apply(ctx)');
   else bad('缺少 apply 导出');
-  if (!Array.isArray(client.inject) || client.inject.length === 0) {
-    ok('不声明服务依赖', 'slots 改成按需获取，服务未就绪也能激活并留下日志');
+  if (Array.isArray(client.inject) && client.inject.includes('slots')) {
+    ok('声明 inject = [slots]', '实测：不声明时宿主不会为该上下文准备 slots，注册会全部落空');
   } else {
-    bad('仍声明了服务依赖', `inject = ${JSON.stringify(client.inject)}；服务未就绪时插件会静默 pending`);
+    bad(
+      'inject 未包含 slots',
+      `inject = ${JSON.stringify(client.inject)}；不声明 slots 时 ctx.slots 与 ctx.get('slots') 都拿不到，`
+      + '表现为"装了插件但界面没有入口"（详见 docs/UI-INTEGRATION.md §12）',
+    );
   }
 }
 

@@ -84,7 +84,7 @@ src/
 ├── capabilities/
 │   ├── Capability.ts         能力基类（依赖声明 + 降级）
 │   ├── GateCapability.ts     先手闸门
-│   ├── ToolsetCapability.ts  十三个工具
+│   ├── ToolsetCapability.ts  十四个工具
 │   └── ReminderCapability.ts 到期提醒
 ├── adapters/
 │   ├── harness/

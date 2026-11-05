@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-xianshou",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "先手协议 · 防认知债插件 for DeepSeek Harness —— 限制 AI 介入时点，不限制使用剂量",
   "license": "MIT",
   "type": "module",
@@ -44,7 +44,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
-    "test": "npm run build && npm run tokens && node --test \"test/*.test.js\" \"test/*.test.mjs\"",
+    "test": "npm run build && npm run tokens && node scripts/gen-guide.mjs && node --test \"test/*.test.js\" \"test/*.test.mjs\"",
     "test:compat": "npm run build && node --test \"test/compat.matrix.test.js\"",
     "test:report": "node scripts/compat-report.mjs",
     "tokens": "npm run build && node scripts/gen-tokens.mjs",
@@ -52,7 +52,8 @@
     "prepublishOnly": "npm run build && npm test",
     "prepare": "npm run build",
     "preview": "npm run build && node scripts/console-preview.mjs",
-    "doctor": "node scripts/doctor.mjs"
+    "doctor": "node scripts/doctor.mjs",
+    "guide": "npm run build && node scripts/gen-guide.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

@@ -25,7 +25,7 @@ test('兼容矩阵：所有版本 × 所有接缝组合都能完成完整链路�
         failures.push(`${tag} 抛错：${cell.error}`);
         continue;
       }
-      if (cell.toolsRegistered !== 13) failures.push(`${tag} 只注册了 ${cell.toolsRegistered} 个工具`);
+      if (cell.toolsRegistered !== 14) failures.push(`${tag} 只注册了 ${cell.toolsRegistered} 个工具`);
       if (cell.gateAfterDraft !== 'allow') failures.push(`${tag} 落稿后仍被拦（${cell.gateAfterDraft}）`);
       if (cell.leftovers.tools !== 0 || cell.leftovers.guards !== 0 || cell.leftovers.preExecute !== 0) {
         failures.push(`${tag} 卸载后残留 ${JSON.stringify(cell.leftovers)}`);

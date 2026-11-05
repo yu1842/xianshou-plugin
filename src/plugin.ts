@@ -22,6 +22,7 @@ import { FileDocumentStore, SessionDocumentStore } from './adapters/storage/docu
 import type { DocumentStore } from './ports/documents.js';
 import type { ArtifactStore, Hasher } from './ports/artifacts.js';
 import { PLUGIN_VERSION } from './version.js';
+import { GuideService } from './application/GuideService.js';
 import type { TaskRepository } from './ports/repository.js';
 import { GateCapability } from './capabilities/GateCapability.js';
 import { ToolsetCapability } from './capabilities/ToolsetCapability.js';
@@ -145,9 +146,12 @@ export function mount(options: MountOptions): PluginRuntime {
     },
   };
 
+  // 时钟提成变量：任务服务与教程服务必须共享同一个时间源，否则测试里推时钟只推进一半。
+  const clock = options.clock ?? new SystemClock();
+
   const tasks = new TaskService({
     repository,
-    clock: options.clock ?? new SystemClock(),
+    clock,
     ids: options.ids ?? new RandomIdGenerator(),
     policy,
     logger,
@@ -162,6 +166,8 @@ export function mount(options: MountOptions): PluginRuntime {
       logger.warn('[xianshou] 缓存水合失败', { error: String(error) });
     });
 
+  const guide = new GuideService({ documents, clock });
+
   const services = {
     tasks,
     cache,
@@ -172,6 +178,7 @@ export function mount(options: MountOptions): PluginRuntime {
     hasher,
     pluginVersion: PLUGIN_VERSION,
     documents,
+    guide,
   };
 
   const capabilityCtx = { bridge, config, logger, services };

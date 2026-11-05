@@ -71,6 +71,29 @@ export {
   type ProbeRecord,
 } from './domain/camp.js';
 export { MemoryDocumentStore, SessionDocumentStore, FileDocumentStore } from './adapters/storage/documents.js';
+export { GuideService, type GuideServiceDeps } from './application/GuideService.js';
+export {
+  GUIDE_CHAPTERS,
+  GUIDE_TRACKS,
+  GUIDE_DOC_KEY,
+  emptyProgress,
+  findChapter,
+  isChapterId,
+  isGuideProgress,
+  isTrack,
+  markRead,
+  nextChapter,
+  readingTime,
+  setTrack,
+  summarize,
+  trackChapters,
+  type GuideChapter,
+  type GuideChapterId,
+  type GuideProgress,
+  type GuideSummary,
+  type GuideTrack,
+  type GuideTrackMeta,
+} from './domain/guide.js';
 export type { DocumentStore } from './ports/documents.js';
 export { FsArtifactStore, MemoryArtifactStore } from './adapters/storage/artifacts.js';
 export { NodeHasher, Fnv1aHasher } from './adapters/hash/sha256.js';

@@ -16,7 +16,7 @@ async function boot(config = FIXED_CONFIG, options = {}) {
   return { harness, runtime };
 }
 
-test('挂载：注册全部十三个工具，且每个工具都带 output 契约', async () => {
+test('挂载：注册全部十四个工具，且每个工具都带 output 契约', async () => {
   const { harness } = await boot();
   assert.deepEqual(harness.toolNames(), [
     'xianshou_audit',
@@ -24,6 +24,7 @@ test('挂载：注册全部十三个工具，且每个工具都带 output 契约
     'xianshou_deliver',
     'xianshou_draft',
     'xianshou_export',
+    'xianshou_guide',
     'xianshou_health',
     'xianshou_import',
     'xianshou_mark',

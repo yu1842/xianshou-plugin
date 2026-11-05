@@ -7,6 +7,7 @@ import { HealthTool, RecallTool, RefusalTool } from '../application/tools/review
 import { StartTaskTool, SubmitDraftTool, TaskStatusTool } from '../application/tools/task-tools.js';
 import { ExportTool, ImportTool } from '../application/tools/archive-tools.js';
 import { CampTool, ProbeTool } from '../application/tools/camp-tools.js';
+import { GuideTool } from '../application/tools/guide-tools.js';
 import type { XianshouTool } from '../application/tool-base.js';
 
 /**
@@ -61,6 +62,8 @@ export class ToolsetCapability extends Capability {
       }),
       new CampTool({ tasks: services.tasks, views: services.views, documents: services.documents }),
       new ProbeTool({ tasks: services.tasks, views: services.views, documents: services.documents }),
+      // 放最后：它是"入口工具"，清单顺序也应当读起来先干活、后求助
+      new GuideTool(services.guide, services.views),
     ];
   }
 }

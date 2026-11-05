@@ -220,7 +220,7 @@ npm run preview     # 生成 docs/console-preview.html 并打开
 | 需求 | 实现 | 证据 |
 | --- | --- | --- |
 | 1. 侧边栏可见入口，位置合理、标识清晰、风格统一 | `sidebar.panellist`，`order=1`，门框图标 + 名称，随主题变色 | `test/client.logic.test.mjs`「注册」三条；`docs/console-preview.html` 页头 |
-| 2. 点击打开功能页面容器 | `main` 槽位，`key === id` | 同上 + 渲染测试（面板骨架含 8 个模块入口） |
+| 2. 点击打开功能页面容器 | `main` 槽位，`key === id` | 同上 + 渲染测试（面板骨架含 9 个模块入口） |
 | 3. 完整展示所有模块与操作项，可交互 | 8 模块 + 搜索/筛选/排序/选中/自评/主题/密度/复制诊断 | `test/client.render.test.mjs` 13 条渲染断言（含逐页空态冒烟） |
 | 4. 权限控制 | `xianshou.view` / `xianshou.operate`；宿主拒绝时入口保留但锁定；写操作禁用并说明；隐藏入口需显式配置 | `test/client.logic.test.mjs`「权限」六条 |
 | 5. 路由配置，跳转无异常 | hash 路由表 + `hashchange` + 深链恢复 + 非法输入容错 | 「路由」四条 |
@@ -294,7 +294,7 @@ Cordis 的依赖注入规则是"服务不到、插件不加载"，而且**不报
 - 有 `cannot get property "x" without inject` → 插件在**启动期**读了没 inject 的服务属性。
   Cordis 的 Context 是 Proxy，这种读取会直接抛错并让整个 entry 不激活（连带十一个工具一起消失）。
   0.2.2 已修（全部探测改为容错读 + `ctx.get()`），升级即可；自己写插件时同理：**不要猜着读 `ctx.xxx`，要读就用 `ctx.get('xxx')` 或先 inject**。
-- 什么都没有 → 0.2.4 起半边已不声明服务依赖，若仍无日志，说明**这个客户端行没被宿主纳入 boot map**（包声明问题），不是代码问题。查 §12 的 `__DSH_BOOT__` 检查。
+- 什么都没有 → 半边必须声明 `inject = ['slots']`（实测：不声明时宿主不会为该上下文准备 slots，`ctx.slots` 与 `ctx.get('slots')` 都拿不到）。若声明了仍无日志，说明**这个客户端行没被宿主纳入 boot map**（包声明问题），不是代码问题。查 §12 的 `__DSH_BOOT__` 检查。
 - 有 `ReferenceError` / `TypeError` → 半边代码在真实环境里抛错，把首行错误贴进 issue。
 
 ### 第 5 步：入口是不是被折叠了

@@ -20,6 +20,11 @@ export type CardNode =
   | { readonly kind: 'meter'; readonly label: string; readonly value: number; readonly tone: CardTone; readonly caption?: string }
   | { readonly kind: 'list'; readonly items: readonly string[]; readonly tone?: CardTone; readonly ordered?: boolean }
   | { readonly kind: 'callout'; readonly tone: CardTone; readonly text: string; readonly title?: string }
+  /**
+   * 原样可抄的片段（工具调用、配置片段、命令）。
+   * 教程类内容必须用它而不是段落：一段带反引号的散文，抄下来十次要错八次。
+   */
+  | { readonly kind: 'code'; readonly text: string; readonly language?: string }
   | { readonly kind: 'divider' }
   | { readonly kind: 'footnote'; readonly text: string };
 

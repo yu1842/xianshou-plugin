@@ -258,7 +258,7 @@ test('注册：只有显式 access=hidden 才完全不注册', () => {
 });
 
 test('注册：模块声明完整且 id 唯一，入口与面板的 id 不漂移', () => {
-  assert.equal(MODULES.length, 8);
+  assert.equal(MODULES.length, 9);
   assert.equal(new Set(MODULES.map((m) => m.id)).size, MODULES.length);
   for (const module of MODULES) {
     assert.ok(module.label && module.icon && module.hint);

@@ -43,7 +43,7 @@ dsh --profile xs-test --dump-config | grep -A5 xianshou
 
 ---
 
-## 十三个工具
+## 十四个工具
 
 | 工具 | 一句话 |
 | --- | --- |
@@ -60,6 +60,7 @@ dsh --profile xs-test --dump-config | grep -A5 xianshou
 | `xianshou_import` | 从备份恢复：默认 dry-run，只增不删 |
 | `xianshou_camp` | 四周训练营：开营 / 看进度 / 验收 |
 | `xianshou_probe` | 记录裸考：W1 基线、W4 脱离测试 |
+| `xianshou_guide` | 使用教程：目录 / 某一章正文 / 切换学习路径 |
 
 卡片样例（真实渲染输出）见 [`docs/SAMPLE-OUTPUT.md`](docs/SAMPLE-OUTPUT.md)。
 
@@ -70,7 +71,7 @@ dsh --profile xs-test --dump-config | grep -A5 xianshou
 插件是双面包：宿主半边提供工具与闸门，客户端半边在 DSH 侧边栏挂一个「先手协议」入口，点开是一个整页面板。
 
 - **入口**：`sidebar.panellist`，`order=1`，门框图标，随宿主主题变色；面板注册在 `main`（键控槽位，`key` 必须与入口 `id` 严格相等）
-- **八个模块**：概览 / 任务台账 / 先手闸门 / 留痕账本 / 回收队列 / 拒绝率 / 健康度 / 设置
+- **九个模块**：概览 / 任务台账 / 先手闸门 / 留痕账本 / 回收队列 / 拒绝率 / 健康度 / 教程 / 设置
 - **权限**：`xianshou.view` 决定面板内容是否可见（拒绝时入口保留、点开是锁定说明页），`xianshou.operate` 决定写操作；只有显式 `access: "hidden"` 才隐藏入口。装完没看到入口，先跑 `npm run doctor`。
 - **路由**：面板内 hash 路由（`#xianshou/tasks/xs-7f21?zone=red`），刷新与前进后退都成立 —— 用 hash 是因为 DSH 前端对未知路径返回 404，不做 history fallback
 - **响应式**：900 px 导航转横排、560 px 卡片两列；不使用 `:has()` / 容器查询 / `fixed` 定位
@@ -146,7 +147,7 @@ src/
 ├── config.ts          配置解析与容错
 ├── domain/            规则层（分区 / 丑版本 / 账本 / 回收 / 拒绝率 / 健康度 / 聚合根）
 ├── ports/             接口：时钟、仓储、宿主接缝、通知、日志
-├── application/       用例编排 + 工具基类 + 十三个工具
+├── application/       用例编排 + 工具基类 + 十四个工具
 ├── capabilities/      闸门 / 工具集 / 提醒
 ├── adapters/          宿主版本适配、存储四实现、通知、日志、工具定义编码
 └── ui/                卡片 IR、令牌、主题、渲染器、六类视图

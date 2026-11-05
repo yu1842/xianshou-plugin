@@ -73,9 +73,9 @@ test('交互：不使用 eval / document.write / innerHTML，避免注入与回�
   assert.ok(!/dangerouslySetInnerHTML/.test(source));
 });
 
-test('体积：单文件客户端不超过 80KB（gzip 后约 15KB），冷启动成本可控', () => {
+test('体积：单文件客户端不超过 120KB（教程内联后 gzip 约 26KB），冷启动成本可控', () => {
   const size = statSync(SOURCE_URL).size;
-  assert.ok(size < 80 * 1024, `客户端过大：${size} 字节`);
+  assert.ok(size < 120 * 1024, `客户端过大：${size} 字节`);
 });
 
 test('兼容：不使用 :has() 作为唯一布局手段，老内核仍可读', () => {

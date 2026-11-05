@@ -128,7 +128,7 @@ test('版本探测：环境变量 DSH_VERSION 优先于探测', async () => {
   }
 });
 
-test('插件激活：十三个工具全部注册（严格上下文下也不缺）', async () => {
+test('插件激活：十四个工具全部注册（严格上下文下也不缺）', async () => {
   const tools = new Map();
   const base = baseCtx();
   base.tools.register = (definition) => {
@@ -137,10 +137,11 @@ test('插件激活：十三个工具全部注册（严格上下文下也不缺�
   };
   const { runtime } = mountWith(strictCtx(base));
   await runtime.ready;
-  assert.equal(tools.size, 13);
+  assert.equal(tools.size, 14);
   assert.ok(tools.has('xianshou_export'));
   assert.ok(tools.has('xianshou_import'));
   assert.ok(tools.has('xianshou_camp'));
   assert.ok(tools.has('xianshou_probe'));
+  assert.ok(tools.has('xianshou_guide'));
   assert.ok(tools.has('xianshou_start'));
 });

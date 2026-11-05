@@ -68,6 +68,9 @@ export class MarkdownCardRenderer implements CardRenderer {
         const head = node.title ? `${style.glyph} ${node.title}　` : `${style.glyph} `;
         return [`${head}${node.text}`, ''];
       }
+      case 'code':
+        // 围栏语言固定为 text：教程里的调用示例是给人抄的，不是给高亮器猜的。
+        return ['```' + (node.language ?? 'text'), node.text, '```', ''];
       case 'divider':
         return ['────', ''];
       case 'footnote':
