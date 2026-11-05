@@ -1,0 +1,1394 @@
+{
+  "generatedAt": "2026-11-05 14:01:42",
+  "range": ">=0.2.1-rc.1 <0.3.0",
+  "total": 63,
+  "passed": 63,
+  "cells": [
+    {
+      "version": "0.2.1-rc.1",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.1",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.1",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.1",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.1",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.1",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.1",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.2",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.2",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.2",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.2",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.2",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.2",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.2",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.3",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.3",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.3",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.3",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.3",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.3",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.3",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.4",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.4",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.4",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.4",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.4",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.4",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.4",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.5",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.5",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.5",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.5",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.5",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.5",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.1-rc.5",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.2",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.2",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.2",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.2",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.2",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.2",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.2",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.3",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.3",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.3",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.3",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.3",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.3",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-alpha.3",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-rc.1",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-rc.1",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-rc.1",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-rc.1",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-rc.1",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-rc.1",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2-rc.1",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2",
+      "profile": "full",
+      "profileLabel": "全部接缝可用",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2",
+      "profile": "no-guard",
+      "profileLabel": "缺少 tools.guard",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2",
+      "profile": "no-pre-execute",
+      "profileLabel": "缺少 tools/pre-execute",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2",
+      "profile": "no-session-state",
+      "profileLabel": "缺少会话状态读写",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2",
+      "profile": "no-emit",
+      "profileLabel": "缺少事件发送",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2",
+      "profile": "no-effect",
+      "profileLabel": "缺少 ctx.effect",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "ask",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "applied",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    },
+    {
+      "version": "0.2.2",
+      "profile": "minimal",
+      "profileLabel": "最小宿主（仅工具注册）",
+      "ok": true,
+      "toolsRegistered": 9,
+      "gateDecision": "allow",
+      "gateAfterDraft": "allow",
+      "guardInstalled": false,
+      "capabilities": {
+        "gate": "skipped",
+        "toolset": "applied",
+        "reminder": "applied"
+      },
+      "storage": "memory+migrating",
+      "leftovers": {
+        "tools": 0,
+        "guards": 0,
+        "preExecute": 0
+      },
+      "error": null
+    }
+  ]
+}

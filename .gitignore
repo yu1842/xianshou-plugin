@@ -1,0 +1,6 @@
+node_modules/
+.xianshou/
+.xianshou-dev/
+*.tgz
+*.tmp
+dist/

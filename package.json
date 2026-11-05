@@ -1,0 +1,52 @@
+{
+  "name": "dsh-plugin-xianshou",
+  "version": "0.1.0",
+  "description": "先手协议 · 防认知债插件 for DeepSeek Harness —— 限制 AI 介入时点，不限制使用剂量",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/plugin.js",
+  "exports": {
+    ".": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "dsh.patch.yml",
+    "docs",
+    "README.md"
+  ],
+  "engines": {
+    "dsh": ">=0.2.1-rc.1 <0.3.0",
+    "node": ">=20.11"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./dsh.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "cognitive-debt",
+    "learning",
+    "guardrail"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "test": "npm run build && npm run tokens && node --test \"test/*.test.js\"",
+    "test:compat": "npm run build && node --test \"test/compat.matrix.test.js\"",
+    "test:report": "node scripts/compat-report.mjs",
+    "tokens": "npm run build && node scripts/gen-tokens.mjs",
+    "sample": "npm run build && node scripts/sample-output.mjs",
+    "prepublishOnly": "npm run build && npm test",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0"
+  }
+}

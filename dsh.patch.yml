@@ -1,0 +1,11 @@
+# DeepSeek Harness bundle patch
+#
+# 由 package.json 的 dsh.bundle.patch 指向本文件。
+# 作用只有一条：把插件插入到 profile 的插件树。
+#
+# 不要在这里写业务配置 —— bundle 层会被版本升级覆盖，
+# 用户自己的选择应写在各自的 profile patch 里（后面的层会覆盖前面的层）。
+
+- insert:
+    - id: xianshou
+      name: 'dsh-plugin-xianshou'

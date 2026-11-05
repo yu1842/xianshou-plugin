@@ -1,0 +1,21 @@
+# 本地开发用 overlay（不写入 profile）
+#
+# 用法：
+#   npm run build
+#   dsh web --patch ./cordis.yml
+#
+# 路径必须绝对；patch 只贡献配置，不改变 loader 的模块解析目录。
+
+- insert:
+    - id: xianshou-dev
+      name: './dist/plugin.js'
+      config:
+        gate:
+          mode: advisory
+        storage:
+          mode: file
+          directory: ./.xianshou-dev/tasks
+        ui:
+          verbose: true
+        recall:
+          autoRemind: false

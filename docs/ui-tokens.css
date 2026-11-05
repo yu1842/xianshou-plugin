@@ -1,0 +1,69 @@
+/* 本文件由 src/ui/tokens.ts 生成，请勿手工编辑。 */
+/* 生成命令：npm run tokens */
+
+:root,
+:root[data-theme="light"] {
+  --xs-bg: #fbf9f5;
+  --xs-paper: #ffffff;
+  --xs-line: #e2ded6;
+  --xs-line-strong: #1c2430;
+  --xs-ink: #1c2430;
+  --xs-ink-2: #3d4a5c;
+  --xs-ink-3: #6b7889;
+  --xs-accent: #b45309;
+  --xs-accent-soft: #fdf3e7;
+  --xs-teal: #0f766e;
+  --xs-teal-soft: #eef7f5;
+  --xs-danger: #b91c1c;
+  --xs-danger-soft: #fdf0ef;
+  --xs-success: #166534;
+  --xs-success-soft: #f0f7f1;
+  --xs-font-reading: "Source Han Serif SC","Songti SC","Noto Serif CJK SC",Georgia,serif;
+  --xs-font-label: ui-sans-serif,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+  --xs-font-mono: ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --xs-space-md: 12px;
+  --xs-radius-md: 4px;
+}
+
+:root[data-theme="dark"] {
+  --xs-bg: #14181d;
+  --xs-paper: #1b2129;
+  --xs-line: #2c3540;
+  --xs-line-strong: #e8eaed;
+  --xs-ink: #e8eaed;
+  --xs-ink-2: #b3bcc7;
+  --xs-ink-3: #7d8896;
+  --xs-accent: #e0a061;
+  --xs-accent-soft: #2a2118;
+  --xs-teal: #5cbcb1;
+  --xs-teal-soft: #16292a;
+  --xs-danger: #e2706f;
+  --xs-danger-soft: #2c1b1b;
+  --xs-success: #74b98a;
+  --xs-success-soft: #17251b;
+  --xs-font-reading: "Source Han Serif SC","Songti SC","Noto Serif CJK SC",Georgia,serif;
+  --xs-font-label: ui-sans-serif,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+  --xs-font-mono: ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --xs-space-md: 12px;
+  --xs-radius-md: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --xs-bg: #14181d;
+    --xs-paper: #1b2129;
+    --xs-line: #2c3540;
+    --xs-line-strong: #e8eaed;
+    --xs-ink: #e8eaed;
+    --xs-ink-2: #b3bcc7;
+    --xs-ink-3: #7d8896;
+    --xs-accent: #e0a061;
+    --xs-accent-soft: #2a2118;
+    --xs-teal: #5cbcb1;
+    --xs-teal-soft: #16292a;
+    --xs-danger: #e2706f;
+    --xs-danger-soft: #2c1b1b;
+    --xs-success: #74b98a;
+    --xs-success-soft: #17251b;
+  }
+}
