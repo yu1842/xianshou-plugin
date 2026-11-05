@@ -294,7 +294,7 @@ Cordis 的依赖注入规则是"服务不到、插件不加载"，而且**不报
 - 有 `cannot get property "x" without inject` → 插件在**启动期**读了没 inject 的服务属性。
   Cordis 的 Context 是 Proxy，这种读取会直接抛错并让整个 entry 不激活（连带九个工具一起消失）。
   0.2.2 已修（全部探测改为容错读 + `ctx.get()`），升级即可；自己写插件时同理：**不要猜着读 `ctx.xxx`，要读就用 `ctx.get('xxx')` 或先 inject**。
-- 什么都没有 → 大概率卡在 `inject = ['slots']`：`slots` 服务没就绪。确认装的是 web profile，且宿主 ≥ 0.2.1-rc.1（更早版本没有槽位系统）。
+- 什么都没有 → 0.2.4 起半边已不声明服务依赖，若仍无日志，说明**这个客户端行没被宿主纳入 boot map**（包声明问题），不是代码问题。查 §12 的 `__DSH_BOOT__` 检查。
 - 有 `ReferenceError` / `TypeError` → 半边代码在真实环境里抛错，把首行错误贴进 issue。
 
 ### 第 5 步：入口是不是被折叠了
@@ -316,6 +316,30 @@ Cordis 的依赖注入规则是"服务不到、插件不加载"，而且**不报
 ---
 
 ## 12. 前端自检：入口仍不出现时
+
+### 第 0 步：先看 boot map（一锤定音）
+
+浏览器控制台执行：
+
+```js
+Object.keys(window.__DSH_BOOT__ || {})
+```
+
+宿主的客户端插件名单在启动时编译进这个对象，键就是插件行的 id。
+
+| 结果 | 含义 |
+| --- | --- |
+| 列表里**没有** `xianshou` | 宿主从未计划加载这个客户端半边 —— 问题在**包声明/安装层**，改 UI 代码没有任何用 |
+| 有 `xianshou`，但控制台没有 `[xianshou]` 日志 | 行进了名单但模块没执行（加载 404 或被执行器拒绝） |
+
+配套再看两条：
+
+```bash
+dsh --profile web --dump-config | grep -i -A4 client    # 宿主眼里的客户端行长什么样
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3080/plugins/xianshou/client.js
+```
+
+### 再看运行时日志
 
 浏览器控制台过滤 `[xianshou]`，0.2.3 起插件会自己报到哪一步。**看到哪一行，就知道卡在哪一层**，不用猜。
 

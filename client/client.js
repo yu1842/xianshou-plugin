@@ -24,7 +24,7 @@ const h = React.createElement;
 
 const PANEL_ID = 'xianshou';
 const PLUGIN_TAG = 'dsh-plugin-xianshou';
-const PACKAGE_VERSION = '0.2.3';
+const PACKAGE_VERSION = '0.2.4';
 
 // 模块加载即打一条：用来区分"半边根本没被加载"与"加载了但注册失败"。
 // 用户在控制台看不到这一行，就说明宿主的 boot map 里没有这个客户端行，问题在包声明而不是代码。
@@ -1520,8 +1520,17 @@ function ConsolePage(props) {
 
 const name = 'xianshou-console';
 
-/** 只依赖 slots：locale 等其它服务按可选方式取，缺了不影响挂载。 */
-const inject = ['slots'];
+/**
+ * 不声明任何服务依赖。
+ *
+ * 原因：Cordis 的 inject 是"服务不到、插件不激活"，而且**不报错** —— 声明 `slots`
+ * 之后，若宿主没先把这个服务准备好，模块连执行都轮不到，控制台一行日志都不会有，
+ * 表现就是"装了插件但完全没有入口"，且无法排查。
+ *
+ * 改成按需获取（resolveSlots 里先读属性、再退回 ctx.get），拿不到就打明确错误。
+ * 这样最坏情况是"入口没注册但有日志"，而不是"悄无声息"。
+ */
+const inject = [];
 
 /** 统一的诊断出口：出问题时让用户只需要看一类前缀。 */
 function debugLog(...args) {

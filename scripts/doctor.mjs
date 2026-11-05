@@ -72,8 +72,11 @@ try {
 if (client) {
   if (typeof client.apply === 'function') ok('导出 apply(ctx)');
   else bad('缺少 apply 导出');
-  if (Array.isArray(client.inject) && client.inject.includes('slots')) ok('inject 声明 slots');
-  else bad('inject 未声明 slots', '拿不到槽位服务时插件会一直 pending，表现为"没有入口"');
+  if (!Array.isArray(client.inject) || client.inject.length === 0) {
+    ok('不声明服务依赖', 'slots 改成按需获取，服务未就绪也能激活并留下日志');
+  } else {
+    bad('仍声明了服务依赖', `inject = ${JSON.stringify(client.inject)}；服务未就绪时插件会静默 pending`);
+  }
 }
 
 // 4. 槽位注册试跑

@@ -14,7 +14,8 @@ test('加载契约：客户端半边只依赖 react，不引 node 内置模块�
 
 test('加载契约：模块导出 name / inject / apply，符合 Cordis 模块形态', () => {
   assert.match(source, /const name = 'xianshou-console'/);
-  assert.match(source, /const inject = \['slots'\]/);
+  // 不声明服务依赖：Cordis 的 inject 未满足时插件会静默 pending，"没有入口"就变得不可排查
+  assert.match(source, /const inject = \[\];/);
   assert.match(source, /function apply\(ctx\)/);
   assert.match(source, /module\.exports = \{\s*name,\s*inject,\s*apply/);
 });
