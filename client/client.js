@@ -24,7 +24,11 @@ const h = React.createElement;
 
 const PANEL_ID = 'xianshou';
 const PLUGIN_TAG = 'dsh-plugin-xianshou';
-const PACKAGE_VERSION = '0.2.2';
+const PACKAGE_VERSION = '0.2.3';
+
+// 模块加载即打一条：用来区分"半边根本没被加载"与"加载了但注册失败"。
+// 用户在控制台看不到这一行，就说明宿主的 boot map 里没有这个客户端行，问题在包声明而不是代码。
+debugLog('客户端半边已加载', { version: PACKAGE_VERSION });
 
 /** 权限点。宿主权限服务存在时按这两个 key 判定；不存在时按只读降级。 */
 const PERMISSIONS = Object.freeze({ view: 'xianshou.view', operate: 'xianshou.operate' });
@@ -1519,42 +1523,132 @@ const name = 'xianshou-console';
 /** 只依赖 slots：locale 等其它服务按可选方式取，缺了不影响挂载。 */
 const inject = ['slots'];
 
+/** 统一的诊断出口：出问题时让用户只需要看一类前缀。 */
+function debugLog(...args) {
+  try {
+    if (typeof console !== 'undefined' && console.info) console.info('[xianshou]', ...args);
+  } catch {
+    /* 日志失败不影响加载 */
+  }
+}
+
+function debugError(...args) {
+  try {
+    if (typeof console !== 'undefined' && console.error) console.error('[xianshou]', ...args);
+  } catch {
+    /* 同上 */
+  }
+}
+
+/**
+ * 取 slots 服务：先读属性（已 inject 时可用），再退回 ctx.get()。
+ * 客户端上下文同样是 Cordis 上下文，未 inject 的属性读取会抛错，所以两条都要容错。
+ */
+function resolveSlots(ctx) {
+  const direct = safeRead(ctx, 'slots');
+  if (direct && typeof direct.register === 'function') return direct;
+  const viaGet = safeCall(ctx, 'get', 'slots');
+  if (viaGet && typeof viaGet.register === 'function') return viaGet;
+  return null;
+}
+
 function apply(ctx) {
   const options = safeRead(ctx, 'config') || {};
   const access = resolveAccess(ctx, options);
+
+  debugLog(`apply 已执行（v${PACKAGE_VERSION}）`, {
+    access: access.level,
+    accessSource: access.source,
+    hasSlotsProperty: Boolean(safeRead(ctx, 'slots')),
+  });
+
   if (access.level === 'hidden') {
     // 只有显式配置才隐藏入口。自动探测到的"拒绝"仍然注册，原因见 resolveAccess 的注释。
-    if (typeof console !== 'undefined' && console.info) {
-      console.info(`[xianshou] 控制台入口未注册：${access.reason}`);
-    }
+    debugLog('入口被配置隐藏（access: hidden），未注册任何槽位', { reason: access.reason });
+    return;
+  }
+
+  const slots = resolveSlots(ctx);
+  if (!slots) {
+    // 这是"没有入口"的第二种可能：半边加载了，但拿不到 slots 服务。
+    debugError('拿不到 slots 服务，入口无法注册', {
+      hint: '请把这条日志 + 宿主版本一起反馈；同时确认宿主是 web profile',
+      contextKeys: (() => {
+        try {
+          return Object.keys(ctx || {});
+        } catch {
+          return [];
+        }
+      })(),
+    });
     return;
   }
 
   const page = (props) => h(ConsolePage, { ...(props || {}), ctx, accessOptions: options });
   page.__ctx = ctx;
 
-  ctx.slots.inject('sidebar.panellist', () =>
-    ctx.slots.register(
-      {
-        name: 'sidebar.panellist',
-        id: PANEL_ID,
-        order: 1,
-        label: () => '先手协议',
-      },
-      SidebarIcon,
-    ),
+  const registered = [];
+  /**
+   * 逐槽位注册，单点失败不影响另一个。
+   * 外面套一层是因为 register 在槽位名不存在时可能抛错 —— 抛出去就等于"静默没有入口"。
+   */
+  const register = (slotName, slotOptions, component) => {
+    try {
+      const run = () =>
+        typeof slots.inject === 'function'
+          ? slots.inject(slotName, () => slots.register(slotOptions, component))
+          : slots.register(slotOptions, component);
+      const disposer = run();
+      registered.push(slotName);
+      debugLog(`已注册 ${slotName}`, slotOptions);
+      return disposer;
+    } catch (error) {
+      debugError(`注册槽位失败：${slotName}`, error && error.message ? error.message : error);
+      return null;
+    }
+  };
+
+  register(
+    'sidebar.panellist',
+    { name: 'sidebar.panellist', id: PANEL_ID, order: 1, label: () => '先手协议' },
+    SidebarIcon,
   );
 
-  ctx.slots.inject('main', () =>
-    ctx.slots.register(
-      {
-        name: 'main',
-        // main 是键控槽位：key 必须与入口 id 一致，否则 selectPanel 找不到目标
-        key: PANEL_ID,
+  // main 是键控槽位：key 必须与入口 id 一致，否则点击入口找不到面板
+  register('main', { name: 'main', key: PANEL_ID }, page);
+
+  if (registered.length === 0) {
+    debugError('两个槽位都没注册成功，侧边栏不会有入口', {
+      hint: '把上面的报错原文与宿主版本一起反馈',
+    });
+  }
+
+  // 诊断出口：浏览器控制台里 __xianshou.dump() 可以看注册结果
+  if (typeof window !== 'undefined') {
+    window.__xianshou = {
+      version: PACKAGE_VERSION,
+      panelId: PANEL_ID,
+      access,
+      registered,
+      slotsApi: (() => {
+        try {
+          return Object.keys(slots);
+        } catch {
+          return [];
+        }
+      })(),
+      dump() {
+        return {
+          version: PACKAGE_VERSION,
+          panelId: PANEL_ID,
+          access: `${access.level}（${access.source}）：${access.reason}`,
+          registered: registered.slice(),
+          slotsApi: this.slotsApi,
+        };
       },
-      page,
-    ),
-  );
+    };
+    debugLog('诊断出口已就绪', '在控制台执行 __xianshou.dump() 查看注册结果');
+  }
 }
 
 module.exports = {

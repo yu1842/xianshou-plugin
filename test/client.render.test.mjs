@@ -41,7 +41,7 @@ test('渲染：面板骨架包含标题、八个模块入口与页脚状态', ()
     assert.ok(html.includes(module.label), `缺少模块入口：${module.label}`);
   }
   assert.match(html, /class="xs-foot"/);
-  assert.match(html, /v0\.2\.2/);
+  assert.match(html, /v0\.2\.3/);
 });
 
 test('渲染：概览页展示真实计数，不使用占位数字', () => {

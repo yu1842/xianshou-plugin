@@ -318,3 +318,43 @@ test('客户端：严格上下文下权限探测回落为只读，而不是崩�
   assert.equal(access.level, 'view');
   assert.equal(access.source, 'default');
 });
+
+test('容错：拿不到 slots 服务时只报错不抛（"没有入口"的第二种可能）', () => {
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args.join(' '));
+  try {
+    const ctx = strictCtx({ get: () => undefined });
+    assert.doesNotThrow(() => client.apply(ctx));
+    assert.ok(errors.some((line) => line.includes('拿不到 slots 服务')), '必须留下可排查的错误');
+  } finally {
+    console.error = originalError;
+  }
+});
+
+test('容错：单个槽位注册抛错时，另一个仍然注册（单点失败不拖垮整体）', () => {
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args.join(' '));
+  const registered = [];
+  try {
+    const ctx = {
+      slots: {
+        inject(_slot, factory) {
+          factory();
+          return () => {};
+        },
+        register(options) {
+          if (options.name === 'sidebar.panellist') throw new Error('unknown slot');
+          registered.push(options.name);
+          return () => {};
+        },
+      },
+    };
+    assert.doesNotThrow(() => client.apply(ctx));
+    assert.deepEqual(registered, ['main'], '入口失败不应影响面板注册');
+    assert.ok(errors.some((line) => line.includes('注册槽位失败')));
+  } finally {
+    console.error = originalError;
+  }
+});

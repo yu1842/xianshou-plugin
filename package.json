@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-xianshou",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "先手协议 · 防认知债插件 for DeepSeek Harness —— 限制 AI 介入时点，不限制使用剂量",
   "license": "MIT",
   "type": "module",
