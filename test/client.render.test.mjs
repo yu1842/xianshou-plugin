@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
-const client = require('../client/client.cjs');
+const client = require('../client/client.js');
 const { ConsolePage, MODULES } = client.__internals;
 
 const h = React.createElement;
@@ -41,7 +41,7 @@ test('渲染：面板骨架包含标题、八个模块入口与页脚状态', ()
     assert.ok(html.includes(module.label), `缺少模块入口：${module.label}`);
   }
   assert.match(html, /class="xs-foot"/);
-  assert.match(html, /v0\.2\.0/);
+  assert.match(html, /v0\.2\.1/);
 });
 
 test('渲染：概览页展示真实计数，不使用占位数字', () => {
@@ -61,11 +61,13 @@ test('渲染：数据源未连接时给明确说明，且不出现示例任务',
   assert.ok(!html.includes('重构订单模块'), '不得用示例数据填充');
 });
 
-test('渲染：无权限时只渲染拒绝态，不泄露模块内容', () => {
-  const html = render({ accessOptions: { access: 'deny' } });
-  assert.match(html, /你没有查看这个面板的权限/);
-  assert.ok(!html.includes('任务台账'), '拒绝态不应渲染导航与模块');
-  assert.ok(!html.includes('重构订单模块'));
+test('渲染：宿主拒绝时渲染锁定态——说明"插件已加载成功，只缺权限"', () => {
+  const html = render({ ctx: { permissions: { has: () => false } } });
+  assert.match(html, /入口在，但内容被锁住了/);
+  assert.match(html, /插件本身已经加载成功/);
+  assert.match(html, /xianshou\.view/);
+  assert.ok(!html.includes('任务台账'), '锁定态不应渲染导航与模块');
+  assert.ok(!html.includes('重构订单模块'), '锁定态不能泄露内容');
 });
 
 test('渲染：任务台账按分区筛选，未选中的任务不出现', () => {

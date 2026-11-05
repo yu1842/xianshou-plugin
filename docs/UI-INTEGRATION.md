@@ -71,23 +71,37 @@ ctx.slots.inject('main', () => ctx.slots.register({
 
 | 权限点 | 含义 | 缺失时的表现 |
 | --- | --- | --- |
-| `xianshou.view` | 能否看到入口与面板 | **不注册任何槽位**（入口不存在，而不是点进去 403） |
+| `xianshou.view` | 能否看到面板内容 | 入口**仍然注册**，点开是一张锁定说明页（写明缺哪个权限点），不渲染任何模块 |
 | `xianshou.operate` | 能否执行写操作 | 入口可见、面板可读、写按钮禁用并给出原因 |
+
+四档访问级别：
+
+| 级别 | 入口 | 面板 | 出现条件 |
+| --- | --- | --- | --- |
+| `hidden` | 不注册 | —— | **仅当**部署配置 `access: 'hidden'`（旧写法 `'deny'` 同义） |
+| `locked` | 可见 | 锁定说明页 | 宿主权限服务拒绝 `xianshou.view` |
+| `view` | 可见 | 只读 | 有 view 无 operate，或未检测到权限服务 |
+| `operate` | 可见 | 可读写 | 两个权限点都有 |
 
 ### 4.2 判定顺序
 
 ```
-1. 宿主权限服务（ctx.permissions / ctx.get('permissions'|'access'|'auth')，要求有 has()）
-     → 有：以 has() 结果为准；has 抛错则按拒绝处理（fail closed）
-2. 部署覆盖（apply 的 config.access = 'deny' | 'view' | 'operate'）
-3. 都没有：按只读开放，并在页头与页脚明示"未检测到平台权限服务"
+1. 显式 access=hidden（部署配置）  → hidden，直接不注册
+2. 宿主权限服务（只认 ctx.permissions 或 ctx.get('permissions')，要求有 has()）
+     → 拒绝 view：locked（入口保留，面板锁定）
+     → 有 view 无 operate：view
+     → 都有：operate
+     → has() 抛错：按拒绝处理（locked）
+3. 都没有：view，并在页头与页脚明示"未检测到平台权限服务"
 ```
 
-三条设计取舍：
+四条设计取舍：
 
-- **只认 `has()`，不猜角色名**。不同部署的 role 命名不统一（owner / admin / operator / member），按名字猜一定会猜错。认不出就当没有权限服务。
-- **`has()` 抛错按拒绝**。权限服务异常时放行，等于把"服务挂了"变成"人人可写"。
-- **宿主判定优先于部署覆盖**。配置不能把被宿主拒绝的人放进来；只能收紧，不能放宽。
+- **只认 `has()`，不猜角色名**。不同部署的 role 命名不统一（owner / admin / operator / member），按名字猜一定会猜错。
+- **探测范围刻意收窄**。只认明确命名为 `permissions` 的服务，不再顺手探测 `ctx.auth` / `ctx.get('access')`。任何带 `has()` 的对象都可能是 feature flag 注册表，误判的代价是入口静默消失。
+- **自动拒绝只降级到 `locked`，不隐藏入口**。入口消失会让用户以为插件没装上；入口还在、点开写明原因，问题才查得动。
+- **宿主判定优先于部署覆盖**。配置不能把被宿主拒绝的人放进来，只能收紧（`hidden`），不能放宽（`operate` 会被宿主拒绝覆盖）。
+
 
 ### 4.3 与平台权限规范的关系
 
@@ -208,7 +222,7 @@ npm run preview     # 生成 docs/console-preview.html 并打开
 | 1. 侧边栏可见入口，位置合理、标识清晰、风格统一 | `sidebar.panellist`，`order=1`，门框图标 + 名称，随主题变色 | `test/client.logic.test.mjs`「注册」三条；`docs/console-preview.html` 页头 |
 | 2. 点击打开功能页面容器 | `main` 槽位，`key === id` | 同上 + 渲染测试（面板骨架含 8 个模块入口） |
 | 3. 完整展示所有模块与操作项，可交互 | 8 模块 + 搜索/筛选/排序/选中/自评/主题/密度/复制诊断 | `test/client.render.test.mjs` 13 条渲染断言（含逐页空态冒烟） |
-| 4. 权限控制 | `xianshou.view` / `xianshou.operate`；拒绝时不注册入口；写操作禁用并说明 | `test/client.logic.test.mjs`「权限」五条 |
+| 4. 权限控制 | `xianshou.view` / `xianshou.operate`；宿主拒绝时入口保留但锁定；写操作禁用并说明；隐藏入口需显式配置 | `test/client.logic.test.mjs`「权限」六条 |
 | 5. 路由配置，跳转无异常 | hash 路由表 + `hashchange` + 深链恢复 + 非法输入容错 | 「路由」四条 |
 | 6. 不同分辨率与主流浏览器 | 三个断点、零 `:has()` 依赖、零固定宽度、无 `fixed` 定位；六宽预览 | `test/client.static.test.mjs` 11 条 |
 | 7. 遵循现有设计规范与交互 | 宿主令牌 + 兜底、继承字体、`aria-*`、reduced-motion、密度档 | 静态检查 + `docs/UI-SPEC.md` |
@@ -222,3 +236,76 @@ npm run preview     # 生成 docs/console-preview.html 并打开
 3. **面板内不写账本**。所有写入走会话工具；界面的"暂存"只是本地草稿，刷新即失。
 4. **实时性取决于数据源**。`broadcast` 模式下只能看到本次连接之后的事件；更早的历史需要宿主提供 `xianshouFeed` 之类的回放接口。
 5. **权限细化到模块级尚未做**。当前是"整块面板"级别；若要按模块授权（例如只允许看健康度），需要平台提供权限点清单后扩展。
+
+---
+
+## 11. 入口不出现时的排查顺序
+
+按顺序走，一步否决一层，不要跳步。
+
+### 第 0 步：先在本机跑自检
+
+```bash
+npm run doctor
+```
+
+它只回答一个问题：**问题在插件包这边，还是在宿主/安装那边**。全部 ✓ 说明包没问题，往下走；有 ✗ 就先修包。
+
+### 第 1 步：插件是否进了 profile
+
+```bash
+dsh plugin --profile web list | grep xianshou
+dsh --profile web --dump-config | grep -i xianshou
+```
+
+- 没有输出 → 装错了 profile（`headless` / `sdk` 没有客户端半边），或根本没装上。
+- 有输出但没有 `client` 字样 → 宿主没识别到客户端半边，检查 `dsh.client.platform` 与 `exports["./client"]`。
+
+### 第 2 步：是否重启过 `dsh web`
+
+Web 端在**启动时**编译客户端包名单并写入 `window.__DSH_BOOT__`。只刷新浏览器，新装的插件不会出现。这是"没有入口"最常见的原因，没有之一。
+
+```bash
+# 停掉 dsh web，重新启动
+dsh web
+```
+
+### 第 3 步：客户端文件是否真的被提供
+
+浏览器 DevTools → Network，刷新页面，过滤 `client.js`：
+
+| 现象 | 含义 | 处理 |
+| --- | --- | --- |
+| `/plugins/xianshou/client.js` 200 | 文件没问题 | 看第 4 步 |
+| 404 | 宿主没找到文件（文件名或导出不对） | 确认文件叫 `client/client.js`，且 `exports["./client"]` 指向它 |
+| 200 但 Console 报 `Cannot find module 'react'` | 半边被当成 ESM，或缺 CJS 边界 | 确认 `client/package.json` 里有 `{"type":"commonjs"}` |
+
+命令行也可以直接验：
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3080/plugins/xianshou/client.js
+```
+
+### 第 4 步：插件是否停在 pending
+
+Cordis 的依赖注入规则是"服务不到、插件不加载"，而且**不报错**。Console 里看 `[xianshou]` 相关输出：
+
+- 有 `控制台入口未注册：…` → 被 `access: "hidden"` 显式关掉了，改配置。
+- 什么都没有 → 大概率卡在 `inject = ['slots']`：`slots` 服务没就绪。确认装的是 web profile，且宿主 ≥ 0.2.1-rc.1（更早版本没有槽位系统）。
+- 有 `ReferenceError` / `TypeError` → 半边代码在真实环境里抛错，把首行错误贴进 issue。
+
+### 第 5 步：入口是不是被折叠了
+
+侧边栏放不下时，靠后的入口会进"更多"菜单。本插件用 `order = 1`（紧跟官方插件分组），正常不会被折叠。若你装了布局类插件（如 two-pane-sidebar），入口会出现在最左侧窄轨上，而不是主侧边栏。
+
+### 第 6 步：宿主版本
+
+| 宿主版本 | 结果 |
+| --- | --- |
+| < 0.2.1-rc.1 | 没有 `slots` / `sidebar.panellist`，插件不会加载 |
+| 0.2.1-rc.1 ~ 0.2.x | 支持 |
+| ≥ 0.3.0 | 未验证；需 `compat.allowUnverified`，且客户端槽位契约可能已变 |
+
+### 一个反直觉的检查
+
+如果入口在、点开显示"入口在，但内容被锁住了"——**这不是加载失败**。入口能出现就证明槽位注册生效了，缺的只是 `xianshou.view` 权限点。这种情况请让管理员授权，不要去重装插件。

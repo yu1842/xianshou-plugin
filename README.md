@@ -67,7 +67,7 @@ dsh --profile xs-test --dump-config | grep -A5 xianshou
 
 - **入口**：`sidebar.panellist`，`order=1`，门框图标，随宿主主题变色；面板注册在 `main`（键控槽位，`key` 必须与入口 `id` 严格相等）
 - **八个模块**：概览 / 任务台账 / 先手闸门 / 留痕账本 / 回收队列 / 拒绝率 / 健康度 / 设置
-- **权限**：`xianshou.view` 决定入口是否注册，`xianshou.operate` 决定写操作是否可用；宿主没提供权限服务时按只读降级并在界面说明
+- **权限**：`xianshou.view` 决定面板内容是否可见（拒绝时入口保留、点开是锁定说明页），`xianshou.operate` 决定写操作；只有显式 `access: "hidden"` 才隐藏入口。装完没看到入口，先跑 `npm run doctor`。
 - **路由**：面板内 hash 路由（`#xianshou/tasks/xs-7f21?zone=red`），刷新与前进后退都成立 —— 用 hash 是因为 DSH 前端对未知路径返回 404，不做 history fallback
 - **响应式**：900 px 导航转横排、560 px 卡片两列；不使用 `:has()` / 容器查询 / `fixed` 定位
 
@@ -133,6 +133,7 @@ npm run test:report  # 生成兼容性报告
 npm run tokens       # 重新导出设计令牌 CSS
 npm run sample       # 重新生成卡片样例
 npm run preview      # 重新生成控制台响应式对照页
+npm run doctor       # 自检：入口为什么不出现（包的问题 vs 宿主的问题）
 ```
 
 ```

@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 0.2.1
+
+修"装上但侧边栏没有入口"这一类问题。两处是 0.2.0 的实现缺陷，不是配置问题。
+
+### 修复
+
+- **客户端文件名**：`client/client.cjs` → `client/client.js`，并新增 `client/package.json`（`{"type":"commonjs"}`）。
+  宿主按固定名提供 `/plugins/<id>/client.js`；根包是 `type: module` 时 `.js` 会被当 ESM，用嵌套 `package.json` 建立 CJS 边界，两边同时满足。
+- **入口不再因权限误判而消失**：自动探测到权限拒绝时改为 `locked`——入口保留，点开是一张说明页（写明缺哪个权限点）。只有显式配置 `access: "hidden"` 才真正不注册。
+  原实现"拒绝就不注册"的取舍是错的：入口静默消失是最难排查的失败模式，用户会以为插件没装上。
+- **权限探测收窄**：只认 `ctx.permissions` / `ctx.get('permissions')`，不再顺手探测 `ctx.auth` / `ctx.get('access')`。任何带 `has()` 的对象都可能是 feature flag 注册表，误判即导致入口消失。
+
+### 新增
+
+- `npm run doctor`：自检包声明、文件名、CJS 边界、槽位注册（模拟宿主 ctx），并区分"包的问题"与"宿主/安装的问题"。
+- `docs/UI-INTEGRATION.md` §11：入口不出现的六步排查顺序，每步都能否决一层。
+
+### 测试
+
+- 117 个用例（新增 2 条：权限探测不泛化、显式 hidden 才不注册）。
+
 ## 0.2.0
 
 新增 Web 端功能入口模块（控制台）。宿主半边向后兼容，工具与闸门行为不变。

@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 
 const require = createRequire(import.meta.url);
-const client = require('../client/client.cjs');
+const client = require('../client/client.js');
 const {
   PANEL_ID,
   MODULES,
@@ -60,7 +60,7 @@ test('权限：宿主提供 has() 时以其判定为准，缺少 operate 降级�
 
   const none = { permissions: { has: () => false } };
   const denied = resolveAccess(none);
-  assert.equal(denied.level, 'deny');
+  assert.equal(denied.level, 'locked', '宿主拒绝时入口保留但锁定，不能静默消失');
   assert.match(denied.reason, new RegExp(PERMISSIONS.view));
 });
 
@@ -72,7 +72,14 @@ test('权限：宿主服务抛错时按拒绝处理（fail closed），不猜测
       },
     },
   };
-  assert.equal(resolveAccess(broken).level, 'deny');
+  assert.equal(resolveAccess(broken).level, 'locked');
+});
+
+test('权限：探测不泛化到 ctx.auth / ctx.get(\'access\')，避免把无关服务当权限源', () => {
+  const featureFlags = { has: () => false };
+  assert.equal(resolveAccess({ auth: featureFlags }).level, 'view', 'ctx.auth 不应被当作权限服务');
+  assert.equal(resolveAccess({ get: (name) => (name === 'access' ? featureFlags : null) }).level, 'view');
+  assert.equal(resolveAccess({ permissions: featureFlags }).level, 'locked', '只有明确命名的 permissions 才认');
 });
 
 test('权限：没有平台权限服务时按只读开放，并说明原因', () => {
@@ -82,10 +89,20 @@ test('权限：没有平台权限服务时按只读开放，并说明原因', ()
   assert.match(access.reason, /未检测到平台权限服务/);
 });
 
-test('权限：部署可显式覆盖（用于私有部署的入口隐藏）', () => {
-  assert.equal(resolveAccess(null, { access: 'deny' }).level, 'deny');
+test('权限：部署可显式覆盖（隐藏入口是唯一需要显式配置的动作）', () => {
+  assert.equal(resolveAccess(null, { access: 'hidden' }).level, 'hidden');
+  assert.equal(resolveAccess(null, { access: 'deny' }).level, 'hidden', 'deny 是旧写法，等价 hidden');
   assert.equal(resolveAccess(null, { access: 'operate' }).level, 'operate');
-  assert.equal(resolveAccess({ permissions: { has: () => false } }, { access: 'operate' }).level, 'deny', '宿主拒绝优先于覆盖');
+  assert.equal(
+    resolveAccess({ permissions: { has: () => false } }, { access: 'operate' }).level,
+    'locked',
+    '宿主拒绝不能被配置放宽成可写',
+  );
+  assert.equal(
+    resolveAccess({ permissions: { has: () => false } }, { access: 'hidden' }).level,
+    'hidden',
+    '显式配置可以把入口彻底藏掉',
+  );
 });
 
 // ── 事件归约 ──────────────────────────────────────────
@@ -227,8 +244,15 @@ test('注册：入口在 sidebar.panellist，面板在 main，且 key 与 id 严
   assert.equal(typeof panel.component, 'function');
 });
 
-test('注册：无权限时不注册任何槽位（不留"点进去 403"的幽灵入口）', () => {
+test('注册：宿主拒绝时仍然注册入口，让"没入口"不会成为不可排查的失败', () => {
   const { ctx, registrations } = fakeCtx({ permissions: { has: () => false }, config: {} });
+  client.apply(ctx);
+  assert.equal(registrations.length, 2, '入口与面板都要注册，点开是锁定说明页');
+  assert.ok(registrations.some((r) => r.options.name === 'sidebar.panellist'));
+});
+
+test('注册：只有显式 access=hidden 才完全不注册', () => {
+  const { ctx, registrations } = fakeCtx({ config: { access: 'hidden' } });
   client.apply(ctx);
   assert.equal(registrations.length, 0);
 });
@@ -243,7 +267,7 @@ test('注册：模块声明完整且 id 唯一，入口与面板的 id 不漂移
 
 test('包声明：双面导出与 client 平台声明就位', () => {
   const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.equal(pkg.exports['./client'], './client/client.cjs');
+  assert.equal(pkg.exports['./client'], './client/client.js');
   assert.equal(pkg.dsh.client.platform, 'web');
   assert.ok(pkg.files.includes('client'));
   assert.ok(pkg.exports['.'], '宿主半边不能被删掉');

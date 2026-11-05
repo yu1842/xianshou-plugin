@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 
-const SOURCE_URL = new URL('../client/client.cjs', import.meta.url);
+const SOURCE_URL = new URL('../client/client.js', import.meta.url);
 const source = readFileSync(SOURCE_URL, 'utf8');
 const css = /const CSS = `([\s\S]*?)`;/.exec(source)[1];
 

@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
-const client = require('../client/client.cjs');
+const client = require('../client/client.js');
 
 const { ConsolePage, CSS } = client.__internals;
 const h = React.createElement;

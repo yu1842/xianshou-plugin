@@ -24,7 +24,7 @@ const h = React.createElement;
 
 const PANEL_ID = 'xianshou';
 const PLUGIN_TAG = 'dsh-plugin-xianshou';
-const PACKAGE_VERSION = '0.2.0';
+const PACKAGE_VERSION = '0.2.1';
 
 /** 权限点。宿主权限服务存在时按这两个 key 判定；不存在时按只读降级。 */
 const PERMISSIONS = Object.freeze({ view: 'xianshou.view', operate: 'xianshou.operate' });
@@ -140,21 +140,22 @@ function formatRoute(route) {
   return `#${PANEL_ID}/${moduleId}${id}${formatQuery(route && route.query)}`;
 }
 
-/** 权限探测：只认"有 has() 的服务"，认不出就返回 null，绝不猜角色名。 */
+/**
+ * 权限探测：只认明确的权限服务。
+ *
+ * 这里刻意不泛化探测 `ctx.auth` / `ctx.get('access')` —— 任何带 `has()` 的对象
+ * 都可能被误当成权限服务（比如 feature flag 注册表），一旦误判就会把入口静默关掉，
+ * 而"入口消失"是最难排查的失败模式。宁可少一层管控，也要保证失败可见。
+ */
 function pickPermissionService(ctx) {
-  const candidates = [];
-  if (ctx) {
-    candidates.push(ctx.permissions);
-    if (typeof ctx.get === 'function') {
-      for (const name of ['permissions', 'access', 'auth']) {
-        try {
-          candidates.push(ctx.get(name));
-        } catch {
-          /* 探测失败按不存在处理 */
-        }
-      }
+  if (!ctx) return null;
+  const candidates = [ctx.permissions];
+  if (typeof ctx.get === 'function') {
+    try {
+      candidates.push(ctx.get('permissions'));
+    } catch {
+      /* 探测失败按不存在处理 */
     }
-    if (ctx.auth) candidates.push(ctx.auth.permissions || ctx.auth);
   }
   for (const candidate of candidates) {
     if (candidate && typeof candidate.has === 'function') return candidate;
@@ -163,13 +164,20 @@ function pickPermissionService(ctx) {
 }
 
 /**
- * 访问级别：
- *   deny    完全不注册入口（没有权限时不留"幽灵入口"）
- *   view    入口可见、面板可读、写操作禁用
- *   operate 全部可用
+ * 访问级别（四档，别混用）：
+ *   hidden   完全不注册入口 —— 只有显式配置才能到这档
+ *   locked   入口仍在，点开是一张"无权限"说明页，不渲染任何模块内容
+ *   view     入口可见、面板可读、写操作禁用
+ *   operate  全部可用
+ *
+ * 关键取舍：自动探测到"拒绝"时走 locked 而不是 hidden。
+ * 入口消失会让用户以为插件没装上；入口还在但说明原因，才查得动。
  */
 function resolveAccess(ctx, options) {
   const override = options && options.access;
+  // deny 是 0.2.0 的旧写法，等价于 hidden，保留兼容
+  const wantsHidden = override === 'hidden' || override === 'deny';
+
   const service = pickPermissionService(ctx);
   if (service) {
     let canView = false;
@@ -182,7 +190,12 @@ function resolveAccess(ctx, options) {
       canOperate = false;
     }
     if (!canView) {
-      return { level: 'deny', source: 'host', reason: `缺少权限点 ${PERMISSIONS.view}` };
+      if (wantsHidden) return { level: 'hidden', source: 'override', reason: '部署配置隐藏了入口' };
+      return {
+        level: 'locked',
+        source: 'host',
+        reason: `宿主权限服务拒绝了 ${PERMISSIONS.view}。入口保留但内容锁定，请让管理员授予该权限点。`,
+      };
     }
     return {
       level: canOperate ? 'operate' : 'view',
@@ -190,7 +203,9 @@ function resolveAccess(ctx, options) {
       reason: canOperate ? '已获得查看与操作权限' : `只读：缺少 ${PERMISSIONS.operate}`,
     };
   }
-  if (override === 'deny' || override === 'view' || override === 'operate') {
+
+  if (wantsHidden) return { level: 'hidden', source: 'override', reason: '部署配置隐藏了入口' };
+  if (override === 'view' || override === 'operate') {
     return { level: override, source: 'override', reason: '由部署配置指定访问级别' };
   }
   return {
@@ -1374,13 +1389,24 @@ function ConsolePage(props) {
 
   const tasks = taskList(state);
 
-  if (access.level === 'deny') {
+  if (access.level === 'locked') {
     return h(
       'div',
       { className: 'xs-root', 'data-density': density, 'data-theme': theme },
-      h('div', { className: 'xs-header' }, h('div', null, h('h1', { className: 'xs-title' }, '先手协议'), h('p', { className: 'xs-subtitle' }, '无访问权限'))),
+      h(
+        'header',
+        { className: 'xs-header' },
+        h('div', null, h('h1', { className: 'xs-title' }, '先手协议'), h('p', { className: 'xs-subtitle' }, '无访问权限')),
+        h('div', { className: 'xs-header-tools' }, h(Badge, { tone: 'danger' }, '已锁定')),
+      ),
       h('div', { className: 'xs-main' },
-        h(Empty, { title: '你没有查看这个面板的权限', body: `${access.reason}。入口通常也不会显示；如果你是直接打开的链接，请让管理员授予 ${PERMISSIONS.view}。` }),
+        h(Empty, {
+          title: '入口在，但内容被锁住了',
+          body: `${access.reason}\n\n这说明插件本身已经加载成功（入口能出现就证明槽位注册生效），缺的只是权限。`,
+        }),
+        h('div', { style: { marginTop: 14 } },
+          h(Note, { tone: 'danger' }, `需要的权限点：${PERMISSIONS.view}（查看）与 ${PERMISSIONS.operate}（操作）。`),
+        ),
       ),
     );
   }
@@ -1417,7 +1443,7 @@ function ConsolePage(props) {
         'div',
         { className: 'xs-header-tools' },
         h(Badge, { tone: access.level === 'operate' ? 'success' : access.level === 'view' ? 'accent' : 'danger' },
-          access.level === 'operate' ? '可操作' : access.level === 'view' ? '只读' : '无权限'),
+          access.level === 'operate' ? '可操作' : access.level === 'view' ? '只读' : '已锁定'),
         h(Badge, { tone: feed.source === 'none' ? 'neutral' : 'teal' },
           feed.source === 'none' ? '数据源未连接' : `数据源 ${feed.source}`),
       ),
@@ -1484,8 +1510,8 @@ const inject = ['slots'];
 function apply(ctx) {
   const options = (ctx && ctx.config) || {};
   const access = resolveAccess(ctx, options);
-  if (access.level === 'deny') {
-    // 没有权限时不注册入口：宁可入口不存在，也不留一个点进去 403 的幽灵入口。
+  if (access.level === 'hidden') {
+    // 只有显式配置才隐藏入口。自动探测到的"拒绝"仍然注册，原因见 resolveAccess 的注释。
     if (typeof console !== 'undefined' && console.info) {
       console.info(`[xianshou] 控制台入口未注册：${access.reason}`);
     }

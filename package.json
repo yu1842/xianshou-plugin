@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-xianshou",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "先手协议 · 防认知债插件 for DeepSeek Harness —— 限制 AI 介入时点，不限制使用剂量",
   "license": "MIT",
   "type": "module",
@@ -11,7 +11,7 @@
       "import": "./dist/plugin.js"
     },
     "./package.json": "./package.json",
-    "./client": "./client/client.cjs"
+    "./client": "./client/client.js"
   },
   "files": [
     "dist",
@@ -50,7 +50,8 @@
     "sample": "npm run build && node scripts/sample-output.mjs",
     "prepublishOnly": "npm run build && npm test",
     "prepare": "npm run build",
-    "preview": "npm run build && node scripts/console-preview.mjs"
+    "preview": "npm run build && node scripts/console-preview.mjs",
+    "doctor": "node scripts/doctor.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
