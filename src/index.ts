@@ -57,6 +57,21 @@ export {
   type MergePlan,
 } from './domain/archive.js';
 export { buildMarkdownReport } from './application/report.js';
+export {
+  CAMP_DOC_KEY,
+  createCamp,
+  evaluateCamp,
+  recordProbe,
+  isCamp,
+  dayOf,
+  type CampRecord,
+  type CampEvaluation,
+  type CampPhase,
+  type CampVerdict,
+  type ProbeRecord,
+} from './domain/camp.js';
+export { MemoryDocumentStore, SessionDocumentStore, FileDocumentStore } from './adapters/storage/documents.js';
+export type { DocumentStore } from './ports/documents.js';
 export { FsArtifactStore, MemoryArtifactStore } from './adapters/storage/artifacts.js';
 export { NodeHasher, Fnv1aHasher } from './adapters/hash/sha256.js';
 export type { ArtifactStore, Hasher, WriteResult } from './ports/artifacts.js';

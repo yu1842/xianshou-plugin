@@ -16,16 +16,18 @@ async function boot(config = FIXED_CONFIG, options = {}) {
   return { harness, runtime };
 }
 
-test('挂载：注册全部十一个工具，且每个工具都带 output 契约', async () => {
+test('挂载：注册全部十三个工具，且每个工具都带 output 契约', async () => {
   const { harness } = await boot();
   assert.deepEqual(harness.toolNames(), [
     'xianshou_audit',
+    'xianshou_camp',
     'xianshou_deliver',
     'xianshou_draft',
     'xianshou_export',
     'xianshou_health',
     'xianshou_import',
     'xianshou_mark',
+    'xianshou_probe',
     'xianshou_recall',
     'xianshou_refusal',
     'xianshou_start',

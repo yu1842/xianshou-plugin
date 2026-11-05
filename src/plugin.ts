@@ -18,6 +18,8 @@ import { MemoryTaskRepository, MigratingRepository, DEFAULT_MIGRATIONS } from '.
 import { ResilientRepository } from './adapters/storage/resilient.js';
 import { FsArtifactStore } from './adapters/storage/artifacts.js';
 import { NodeHasher } from './adapters/hash/sha256.js';
+import { FileDocumentStore, SessionDocumentStore } from './adapters/storage/documents.js';
+import type { DocumentStore } from './ports/documents.js';
 import type { ArtifactStore, Hasher } from './ports/artifacts.js';
 import { PLUGIN_VERSION } from './version.js';
 import type { TaskRepository } from './ports/repository.js';
@@ -65,6 +67,7 @@ export interface MountOptions {
   readonly repository?: TaskRepository;
   readonly artifacts?: ArtifactStore;
   readonly hasher?: Hasher;
+  readonly documents?: DocumentStore;
 }
 
 const CAPABILITIES: readonly Capability[] = [new GateCapability(), new ToolsetCapability(), new ReminderCapability()];
@@ -130,6 +133,11 @@ export function mount(options: MountOptions): PluginRuntime {
     options.artifacts ??
     new FsArtifactStore(config.archive.directory ?? join(resolveCwd(), 'xianshou-export'), logger);
   const hasher = options.hasher ?? new NodeHasher();
+  const documents =
+    options.documents ??
+    (SessionDocumentStore.isAvailable(bridge)
+      ? new SessionDocumentStore(bridge, logger)
+      : new FileDocumentStore(join(resolveCwd(), '.xianshou', 'state'), logger));
 
   const sessionSink = {
     publish(event: DomainEvent): void {
@@ -163,6 +171,7 @@ export function mount(options: MountOptions): PluginRuntime {
     artifacts,
     hasher,
     pluginVersion: PLUGIN_VERSION,
+    documents,
   };
 
   const capabilityCtx = { bridge, config, logger, services };
@@ -174,6 +183,7 @@ export function mount(options: MountOptions): PluginRuntime {
     verdict: gateResult.verdict,
     repository: repository.kind,
     archiveDir: artifacts.directory,
+    documents: documents.kind,
     capabilities: reports.map((r) => `${r.id}:${r.status}`).join(' '),
   };
   logger.info('[xianshou] 已挂载', summary);

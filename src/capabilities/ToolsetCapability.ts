@@ -6,6 +6,7 @@ import { AuditLedgerTool, DeliverTool, MarkSegmentTool } from '../application/to
 import { HealthTool, RecallTool, RefusalTool } from '../application/tools/review-tools.js';
 import { StartTaskTool, SubmitDraftTool, TaskStatusTool } from '../application/tools/task-tools.js';
 import { ExportTool, ImportTool } from '../application/tools/archive-tools.js';
+import { CampTool, ProbeTool } from '../application/tools/camp-tools.js';
 import type { XianshouTool } from '../application/tool-base.js';
 
 /**
@@ -58,6 +59,8 @@ export class ToolsetCapability extends Capability {
         hasher: services.hasher,
         pluginVersion: services.pluginVersion,
       }),
+      new CampTool({ tasks: services.tasks, views: services.views, documents: services.documents }),
+      new ProbeTool({ tasks: services.tasks, views: services.views, documents: services.documents }),
     ];
   }
 }

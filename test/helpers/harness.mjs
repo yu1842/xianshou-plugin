@@ -1,6 +1,7 @@
 import { MemoryLogger, MemoryNotifier, ManualClock, SequentialIdGenerator } from '../../dist/index.js';
 import { MemoryArtifactStore } from '../../dist/adapters/storage/artifacts.js';
 import { Fnv1aHasher } from '../../dist/adapters/hash/sha256.js';
+import { MemoryDocumentStore } from '../../dist/adapters/storage/documents.js';
 import { mount } from '../../dist/plugin.js';
 
 /**
@@ -98,6 +99,7 @@ export class FakeHarness {
     this.clock = new ManualClock(this.options.startTime ?? '2026-11-05T09:00:00.000Z');
     this.artifacts = new MemoryArtifactStore();
     this.hasher = new Fnv1aHasher();
+    this.documents = new MemoryDocumentStore();
     const runtime = mount({
       ctx: this.ctx,
       config,
@@ -107,6 +109,7 @@ export class FakeHarness {
       ids: new SequentialIdGenerator(),
       artifacts: this.artifacts,
       hasher: this.hasher,
+      documents: this.documents,
     });
     this.runtime = runtime;
     return runtime;

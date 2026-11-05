@@ -6,6 +6,7 @@ import type { TaskCache } from '../application/TaskCache.js';
 import type { ToolViews } from '../application/views.js';
 import type { LedgerPolicy } from '../domain/ledger.js';
 import type { ArtifactStore, Hasher } from '../ports/artifacts.js';
+import type { DocumentStore } from '../ports/documents.js';
 
 /**
  * 能力（Capability）
@@ -33,6 +34,7 @@ export interface CapabilityServices {
   readonly artifacts: ArtifactStore;
   readonly hasher: Hasher;
   readonly pluginVersion: string;
+  readonly documents: DocumentStore;
 }
 
 export interface CapabilityContext {

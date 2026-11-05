@@ -43,7 +43,7 @@ dsh --profile xs-test --dump-config | grep -A5 xianshou
 
 ---
 
-## 十一个工具
+## 十三个工具
 
 | 工具 | 一句话 |
 | --- | --- |
@@ -58,6 +58,8 @@ dsh --profile xs-test --dump-config | grep -A5 xianshou
 | `xianshou_health` | 四指标一起看，不给总分 |
 | `xianshou_export` | 导出周报（markdown）/ 备份（json）/ 两者 |
 | `xianshou_import` | 从备份恢复：默认 dry-run，只增不删 |
+| `xianshou_camp` | 四周训练营：开营 / 看进度 / 验收 |
+| `xianshou_probe` | 记录裸考：W1 基线、W4 脱离测试 |
 
 卡片样例（真实渲染输出）见 [`docs/SAMPLE-OUTPUT.md`](docs/SAMPLE-OUTPUT.md)。
 
@@ -144,7 +146,7 @@ src/
 ├── config.ts          配置解析与容错
 ├── domain/            规则层（分区 / 丑版本 / 账本 / 回收 / 拒绝率 / 健康度 / 聚合根）
 ├── ports/             接口：时钟、仓储、宿主接缝、通知、日志
-├── application/       用例编排 + 工具基类 + 十一个工具
+├── application/       用例编排 + 工具基类 + 十三个工具
 ├── capabilities/      闸门 / 工具集 / 提醒
 ├── adapters/          宿主版本适配、存储四实现、通知、日志、工具定义编码
 └── ui/                卡片 IR、令牌、主题、渲染器、六类视图

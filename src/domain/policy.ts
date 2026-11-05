@@ -33,6 +33,12 @@ export interface ThresholdPolicy {
   readonly refusalContrarianAbove: number;
   /** 健康度报告的最少样本量，低于此值不判定。 */
   readonly minSamples: number;
+  /** 训练营验收：质量相对基线的下限。方案原文 90%。 */
+  readonly campQualityFloor: number;
+  /** 训练营验收：允许的耗时增幅上限。方案原文 20%。 */
+  readonly campTimeBudget: number;
+  /** 训练营最少天数，早于此天数不允许做脱离测试（方案的四周边界）。 */
+  readonly campMinDays: number;
 }
 
 export type PolicyOverrides = Partial<Omit<ThresholdPolicy, 'recallWindowsHours'>> & {
@@ -53,6 +59,9 @@ const DEFAULTS: ThresholdPolicy = {
   refusalBlindBelow: 0.1,
   refusalContrarianAbove: 0.6,
   minSamples: 5,
+  campQualityFloor: 0.9,
+  campTimeBudget: 0.2,
+  campMinDays: 21,
 };
 
 /** 阈值组合非法时立刻失败，避免"静默跑着一套自相矛盾的规则"。 */
@@ -77,6 +86,9 @@ export class DefaultThresholdPolicy implements ThresholdPolicy {
   readonly refusalBlindBelow: number;
   readonly refusalContrarianAbove: number;
   readonly minSamples: number;
+  readonly campQualityFloor: number;
+  readonly campTimeBudget: number;
+  readonly campMinDays: number;
 
   constructor(overrides: PolicyOverrides = {}) {
     const merged = { ...DEFAULTS, ...overrides };
@@ -93,6 +105,9 @@ export class DefaultThresholdPolicy implements ThresholdPolicy {
     this.refusalBlindBelow = merged.refusalBlindBelow;
     this.refusalContrarianAbove = merged.refusalContrarianAbove;
     this.minSamples = merged.minSamples;
+    this.campQualityFloor = merged.campQualityFloor;
+    this.campTimeBudget = merged.campTimeBudget;
+    this.campMinDays = merged.campMinDays;
     this.#assertCoherent();
   }
 
@@ -116,6 +131,15 @@ export class DefaultThresholdPolicy implements ThresholdPolicy {
     }
     if (this.recallPassScore <= 0 || this.recallPassScore > 1) {
       issues.push('recallPassScore 必须位于 (0, 1]');
+    }
+    if (this.campQualityFloor <= 0 || this.campQualityFloor > 1) {
+      issues.push('campQualityFloor 必须位于 (0, 1]');
+    }
+    if (this.campTimeBudget < 0) {
+      issues.push('campTimeBudget 不能为负');
+    }
+    if (!Number.isInteger(this.campMinDays) || this.campMinDays < 1) {
+      issues.push('campMinDays 必须是正整数');
     }
     if (issues.length > 0) throw new PolicyValidationError(issues);
   }

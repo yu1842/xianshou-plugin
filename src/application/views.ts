@@ -2,6 +2,7 @@ import type { ThresholdPolicy } from '../domain/policy.js';
 import { LedgerCard } from '../ui/views/ledger-view.js';
 import { HealthCard } from '../ui/views/health-view.js';
 import { ArchiveCard } from '../ui/views/archive-view.js';
+import { CampCard } from '../ui/views/camp-view.js';
 import { RecallCard } from '../ui/views/recall-view.js';
 import { RefusalCard } from '../ui/views/refusal-view.js';
 import { GateCard, TaskCard, ZoneCard } from '../ui/views/task-view.js';
@@ -21,6 +22,7 @@ export interface ToolViews {
   readonly refusal: RefusalCard;
   readonly health: HealthCard;
   readonly archive: ArchiveCard;
+  readonly camp: CampCard;
 }
 
 export function createViews(policy: ThresholdPolicy): ToolViews {
@@ -33,5 +35,6 @@ export function createViews(policy: ThresholdPolicy): ToolViews {
     refusal: new RefusalCard(),
     health: new HealthCard(),
     archive: new ArchiveCard(),
+    camp: new CampCard(),
   };
 }

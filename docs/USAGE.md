@@ -127,7 +127,7 @@ dsh web --patch ./cordis.yml
 
 ---
 
-## 4. 十一个工具
+## 4. 十三个工具
 
 调用顺序即方案的动作顺序。模型通常会自动调用；你也可以直接要求它调。
 
@@ -144,6 +144,8 @@ dsh web --patch ./cordis.yml
 | `xianshou_health` | 四指标健康度 | 无 |
 | `xianshou_export` | 导出周报 / 备份 | `format`（markdown/json/both）、`name`、`redact`、`overwrite` |
 | `xianshou_import` | 从备份恢复 | `file`、`mode`（dry-run/merge/overwrite） |
+| `xianshou_camp` | 四周训练营：开营 / 看进度 | `action`（start/status）、`label`、`weeks` |
+| `xianshou_probe` | 记录一次裸考 | `kind`（baseline/exit）、`title`、`minutes`、`quality`、`ai_used` |
 
 ### 4.1 一次完整对话长什么样
 
@@ -200,6 +202,36 @@ xianshou_import(file="weekly-1106.json", mode="overwrite") → 备份优先，�
 - `file` 可以写归档目录里的文件名，也可以写绝对路径（恢复旧机器上的备份用）。
 
 **可验证凭据**：报表末尾会写 `sha256(archive.json) = …`。对同名 `.json` 算一次 SHA-256，值一致说明这份备份没被改过。归档文件是可以被编辑的，凭据让"没被改过"可验证 —— 这不是防篡改，是防"你以为是原版"。
+
+### 4.3 四周训练营
+
+```text
+xianshou_camp(action="start", label="2026 秋 · 第 1 期")
+xianshou_camp(action="status")          → 第几天、哪一周、该做什么
+xianshou_probe(kind="baseline", title="写一份需求说明", minutes=100, quality=80, ai_used=false)
+xianshou_probe(kind="exit",     title="同难度任务",     minutes=110, quality=76, ai_used=false)
+```
+
+四周安排（`status` 会按天数自动告诉你现在该做哪一段）：
+
+| 周 | 做什么 | 插件侧动作 |
+| --- | --- | --- |
+| W1 | 不用 AI，独立完成一个真实小任务，记耗时与质量 | `xianshou_probe kind=baseline` |
+| W2 | 每天一个红区任务，严格 20 分钟先手 | 正常 `xianshou_start` → `xianshou_draft` |
+| W3 | 强制 24h / 7d 双回收，记录通过率 | `xianshou_recall` |
+| W4 | 撤掉 AI 做同难度任务，与基线对比 | `xianshou_probe kind=exit` |
+
+**验收不给感觉分，只给两个比值**：质量 ≥ 基线的 90%、耗时增幅 ≤ 20%。
+三档结论：`通过` / `部分达标`（一个达标一个不达标，会指明是哪边）/ `未通过`。
+
+四条硬规则，都是为了让验收还能算数：
+
+- `ai_used: true` 直接拒绝 —— 用了 AI 的产出是"AI 的基线"，不是你的。
+- **基线只能记一次**。能重来就没有"脱离测试"了。
+- 脱离测试要等到**第 21 天**；提前测的是"学习中的你"，两次数据不可比。确有补录需求可传 `force: true`，结果会被标注为不可横向比较。
+- 训练营是单例：一轮没走完不能开新的，否则等于悄悄重置基线。
+
+质量分怎么打？前后两次必须用**同一把尺子**（例如：能直接用 60，同事能看懂 80，不用返工 90）。这件事插件替不了你 —— 它只能保证两个数字被如实记录、并按公式判定。
 
 ---
 

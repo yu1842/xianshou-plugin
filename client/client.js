@@ -36,7 +36,7 @@ const h = React.createElement;
 
 const PANEL_ID = 'xianshou';
 const PLUGIN_TAG = PLUGIN_ID;
-const PACKAGE_VERSION = '0.3.0';
+const PACKAGE_VERSION = '0.4.0';
 
 // 模块加载即打一条：用来区分"半边根本没被加载"与"加载了但注册失败"。
 // 用户在控制台看不到这一行，就说明宿主的 boot map 里没有这个客户端行，问题在包声明而不是代码。
