@@ -88,15 +88,19 @@ test('插件激活：ctx.get 也抛错时仍然能挂载（两条探测路径都
   assert.equal(runtime.capabilities.find((c) => c.id === 'toolset').status, 'applied');
 });
 
-test('版本探测：宿主通过 ctx.get("version") 暴露版本时能被正确读到', async () => {
+test('版本探测：直读 version 会抛、ctx.get("version") 可读——复现 0.2.1-rc.3 真机行为', async () => {
+  // 真机观测：0.2.1-rc.3 上直读 ctx.version 抛 "cannot get property"，
+  // 说明 version 是已定义服务；此时 get() 应当能读到真实版本，而不是回落基线。
   const ctx = strictCtx(
     baseCtx({
-      get: (name) => (name === 'version' ? '0.2.2-rc.1' : undefined),
+      get: (name) => (name === 'version' ? '0.2.1-rc.3' : undefined),
     }),
   );
-  const { runtime } = mountWith(ctx);
+  assert.throws(() => ctx.version, /without inject/);
+  const { runtime, logger } = mountWith(ctx);
   await runtime.ready;
-  assert.equal(runtime.version, '0.2.2-rc.1');
+  assert.equal(runtime.version, '0.2.1-rc.3');
+  assert.ok(!logger.entries.some((e) => e.message.includes('未能从宿主读到版本号')), '读到真实版本时不应告警');
 });
 
 test('版本探测：版本挂在 app 服务上时也能读到', async () => {
