@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## 0.3.0
+
+新增**导出与归档**：账本可以带走、可以交接、可以被别人核对。
+
+### 新增
+
+- `xianshou_export`：`format=markdown|json|both`
+  - markdown = 可外发的周报（四指标 + 任务明细 + 口径说明 + 校验值）
+  - json = 可恢复的完整备份
+  - 默认**不覆盖**同名文件；“第二次导出冲掉第一次备份”是这类功能最常见的事故
+  - `redact=true` 去掉先手稿正文与回收答案原文，**保留结构与全部指标**
+- `xianshou_import`：`mode=dry-run|merge|overwrite`
+  - 默认 dry-run：只报告会新增/覆盖/跳过几条，不改账本
+  - **只增不删**：恢复不会删除现有任务，导错文件不会毁掉现有的账
+  - 字段级校验：版本过高明确拒绝、JSON 坏了不写入任何东西
+- 归档领域（`domain/archive.ts`）：`createBundle` / `parseBundle` / `planMerge`，dry-run 与真跑共用同一条计算路径
+- 产物存储端口（`ports/artifacts.ts`）：`FsArtifactStore`（文件名白名单、原子写、默认不覆盖）+ `MemoryArtifactStore`
+- 校验盖章：`Hasher` 端口 + SHA-256 实现，报表末尾附 `sha256(archive.json)` 凭据
+- 版本单一真源 `src/version.ts`；测试断言它同时等于 `package.json` 与客户端常量
+- 配置新增 `archive.directory` / `archive.redact`
+
+### 测试
+
+- 新增 18 条归档用例：往返无损、脱敏边界、不可信输入、合并策略计数、报表内容、路径穿越、原子写、工具链路（含"导入不删任务""坏文件不写入"）
+- 累计 148 个用例，工具数 9 → 11
+
 ## 0.2.4
 
 针对实测现象"控制台一行 `[xianshou]` 都没有"（= 客户端半边从未被执行）做的定向修改。

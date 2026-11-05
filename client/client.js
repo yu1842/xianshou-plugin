@@ -3,8 +3,11 @@
 /**
  * 先手协议 · 控制台（DSH 客户端半边）
  *
- * 形态：单文件 CJS，只 require('react')。
- * 原因：DSH 的 client 半边是"惰性 CJS 模块表"，由 ModuleLoader 在首次 require 时执行；
+ * 形态：单文件、双形态入口（只 require('react')）。
+ *   - 浏览器：必须走 window.__ModuleLoader__.load({ id, factory }) 自注册。宿主把各包的
+ *     client 半边当 combo script 直接注入页面，页面里没有 module/require 这两个全局量；
+ *     写成裸 module.exports 会在顶层抛 ReferenceError，表现为"装了插件但界面没有入口"。
+ *   - CJS：Node 侧 require 时直接返回 build(require) 的结果，供 node --test 与工具链复用。
  * 多文件相对 require 依赖宿主如何解析模块路径，单文件是唯一不依赖宿主打包器的写法。
  *
  * 注册的两个槽位：
@@ -18,13 +21,22 @@
  * 全都不可用时显示"数据源未连接"，不填充任何假数据。
  */
 
+/** 必须与包名一致：宿主 boot 清单里的客户端 entry id 由包名推导。 */
+const PLUGIN_ID = 'dsh-plugin-xianshou';
+
+/**
+ * 客户端工厂体。
+ * 浏览器里由 ModuleLoader 调用 factory(require)；CJS 下在文件末尾以 build(require) 执行。
+ * 函数体不整体缩进，是为了让本次修复的 diff 只落在边界上，不产生整文件重排。
+ */
+function build(require) {
 const React = require('react');
 
 const h = React.createElement;
 
 const PANEL_ID = 'xianshou';
-const PLUGIN_TAG = 'dsh-plugin-xianshou';
-const PACKAGE_VERSION = '0.2.4';
+const PLUGIN_TAG = PLUGIN_ID;
+const PACKAGE_VERSION = '0.3.0';
 
 // 模块加载即打一条：用来区分"半边根本没被加载"与"加载了但注册失败"。
 // 用户在控制台看不到这一行，就说明宿主的 boot map 里没有这个客户端行，问题在包声明而不是代码。
@@ -1521,16 +1533,16 @@ function ConsolePage(props) {
 const name = 'xianshou-console';
 
 /**
- * 不声明任何服务依赖。
+ * 必须声明 slots 服务依赖。
  *
- * 原因：Cordis 的 inject 是"服务不到、插件不激活"，而且**不报错** —— 声明 `slots`
- * 之后，若宿主没先把这个服务准备好，模块连执行都轮不到，控制台一行日志都不会有，
- * 表现就是"装了插件但完全没有入口"，且无法排查。
- *
- * 改成按需获取（resolveSlots 里先读属性、再退回 ctx.get），拿不到就打明确错误。
- * 这样最坏情况是"入口没注册但有日志"，而不是"悄无声息"。
+ * 这里曾写成空数组，理由是"声明 inject 后服务不到就等于插件静默 pending"。
+ * 实测恰好相反：不声明 inject 时宿主根本不会给这个上下文准备 slots，
+ * ctx.slots 与 ctx.get('slots') 都拿不到（控制台 hasSlotsProperty: false），
+ * 于是 apply 照常执行、却一个槽位也注册不上 —— 表现为"装了插件但界面没有入口"。
+ * 声明 inject 之后，Cordis 会等 slots 就绪再激活本插件，这正是需要的等待语义。
+ * resolveSlots 的双路读取保留为防御层，不再承担兜底职责。
  */
-const inject = [];
+const inject = ['slots'];
 
 /** 统一的诊断出口：出问题时让用户只需要看一类前缀。 */
 function debugLog(...args) {
@@ -1660,7 +1672,7 @@ function apply(ctx) {
   }
 }
 
-module.exports = {
+return {
   name,
   inject,
   apply,
@@ -1685,4 +1697,19 @@ module.exports = {
     ConsolePage,
     CSS,
   },
-};
+  };
+}
+
+// ─────────────────────────────────────────────────────────────
+// 双形态引导（必须在文件末尾：build 依赖上面全部声明）
+// ─────────────────────────────────────────────────────────────
+
+const __root = typeof window !== 'undefined' ? window : undefined;
+
+if (__root && __root.__ModuleLoader__ && typeof __root.__ModuleLoader__.load === 'function') {
+  // 浏览器：只注册 factory，宿主按需执行，不产生加载期副作用
+  __root.__ModuleLoader__.load({ id: PLUGIN_ID, factory: build });
+} else if (typeof module !== 'undefined' && module.exports) {
+  // CJS：node --test 与工具链直接拿到导出对象
+  module.exports = build(require);
+}

@@ -4,7 +4,7 @@ import type { Clock, IdGenerator } from '../ports/time.js';
 import type { TaskRepository } from '../ports/repository.js';
 import type { ThresholdPolicy } from '../domain/policy.js';
 import { asTaskId, DomainError, type Iso8601, type TaskId, type Zone } from '../domain/model.js';
-import { TaskRecord } from '../domain/task.js';
+import { TaskRecord, type TaskSnapshot } from '../domain/task.js';
 import { ZoneClassifier, type ZoneSignals } from '../domain/zone.js';
 import { isDue, isOverdue, type RecallGate } from '../domain/recall.js';
 
@@ -123,6 +123,16 @@ export class TaskService {
     const snapshot = await this.#deps.repository.load(taskId);
     if (!snapshot) throw new DomainError('TASK_NOT_FOUND', `没有这个任务：${id}`, '先用 xianshou_start 创建任务。');
     return TaskRecord.restore(snapshot, this.#deps.policy);
+  }
+
+  /**
+   * 导入一条快照：先走 TaskRecord.restore 做结构与版本校验，再落库。
+   * 不直接 write snapshot —— 恢复的输入来自外部文件，必须当成不可信数据。
+   */
+  async importSnapshot(snapshot: TaskSnapshot): Promise<TaskRecord> {
+    const task = TaskRecord.restore(snapshot, this.#deps.policy);
+    await this.save(task);
+    return task;
   }
 
   async save(task: TaskRecord): Promise<void> {

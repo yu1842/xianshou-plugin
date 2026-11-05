@@ -16,6 +16,10 @@ import { SessionStateRepository } from './adapters/storage/session-state.js';
 import { JsonFileRepository } from './adapters/storage/file.js';
 import { MemoryTaskRepository, MigratingRepository, DEFAULT_MIGRATIONS } from './adapters/storage/memory.js';
 import { ResilientRepository } from './adapters/storage/resilient.js';
+import { FsArtifactStore } from './adapters/storage/artifacts.js';
+import { NodeHasher } from './adapters/hash/sha256.js';
+import type { ArtifactStore, Hasher } from './ports/artifacts.js';
+import { PLUGIN_VERSION } from './version.js';
 import type { TaskRepository } from './ports/repository.js';
 import { GateCapability } from './capabilities/GateCapability.js';
 import { ToolsetCapability } from './capabilities/ToolsetCapability.js';
@@ -59,6 +63,8 @@ export interface MountOptions {
   readonly logger?: Logger;
   readonly notifier?: Notifier;
   readonly repository?: TaskRepository;
+  readonly artifacts?: ArtifactStore;
+  readonly hasher?: Hasher;
 }
 
 const CAPABILITIES: readonly Capability[] = [new GateCapability(), new ToolsetCapability(), new ReminderCapability()];
@@ -120,6 +126,10 @@ export function mount(options: MountOptions): PluginRuntime {
   const cache = new TaskCache();
   const repository = options.repository ?? buildRepository(config, bridge, logger);
   const notifier = options.notifier ?? new SessionNotifier(bridge, logger);
+  const artifacts =
+    options.artifacts ??
+    new FsArtifactStore(config.archive.directory ?? join(resolveCwd(), 'xianshou-export'), logger);
+  const hasher = options.hasher ?? new NodeHasher();
 
   const sessionSink = {
     publish(event: DomainEvent): void {
@@ -150,6 +160,9 @@ export function mount(options: MountOptions): PluginRuntime {
     views: createViews(policy),
     ledgerPolicy: new LedgerPolicy(policy),
     notifier,
+    artifacts,
+    hasher,
+    pluginVersion: PLUGIN_VERSION,
   };
 
   const capabilityCtx = { bridge, config, logger, services };
@@ -160,6 +173,7 @@ export function mount(options: MountOptions): PluginRuntime {
     adapter: adapter.id,
     verdict: gateResult.verdict,
     repository: repository.kind,
+    archiveDir: artifacts.directory,
     capabilities: reports.map((r) => `${r.id}:${r.status}`).join(' '),
   };
   logger.info('[xianshou] 已挂载', summary);

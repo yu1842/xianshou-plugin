@@ -5,6 +5,7 @@ import { ThemeResolver } from '../ui/theme.js';
 import { AuditLedgerTool, DeliverTool, MarkSegmentTool } from '../application/tools/ledger-tools.js';
 import { HealthTool, RecallTool, RefusalTool } from '../application/tools/review-tools.js';
 import { StartTaskTool, SubmitDraftTool, TaskStatusTool } from '../application/tools/task-tools.js';
+import { ExportTool, ImportTool } from '../application/tools/archive-tools.js';
 import type { XianshouTool } from '../application/tool-base.js';
 
 /**
@@ -43,6 +44,20 @@ export class ToolsetCapability extends Capability {
       new RecallTool(services.tasks, services.views),
       new RefusalTool(services.tasks, services.views),
       new HealthTool(services.tasks, services.views),
+      new ExportTool({
+        tasks: services.tasks,
+        views: services.views,
+        artifacts: services.artifacts,
+        hasher: services.hasher,
+        pluginVersion: services.pluginVersion,
+      }),
+      new ImportTool({
+        tasks: services.tasks,
+        views: services.views,
+        artifacts: services.artifacts,
+        hasher: services.hasher,
+        pluginVersion: services.pluginVersion,
+      }),
     ];
   }
 }

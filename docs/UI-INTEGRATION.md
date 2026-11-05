@@ -292,7 +292,7 @@ Cordis 的依赖注入规则是"服务不到、插件不加载"，而且**不报
 
 - 有 `控制台入口未注册：…` → 被 `access: "hidden"` 显式关掉了，改配置。
 - 有 `cannot get property "x" without inject` → 插件在**启动期**读了没 inject 的服务属性。
-  Cordis 的 Context 是 Proxy，这种读取会直接抛错并让整个 entry 不激活（连带九个工具一起消失）。
+  Cordis 的 Context 是 Proxy，这种读取会直接抛错并让整个 entry 不激活（连带十一个工具一起消失）。
   0.2.2 已修（全部探测改为容错读 + `ctx.get()`），升级即可；自己写插件时同理：**不要猜着读 `ctx.xxx`，要读就用 `ctx.get('xxx')` 或先 inject**。
 - 什么都没有 → 0.2.4 起半边已不声明服务依赖，若仍无日志，说明**这个客户端行没被宿主纳入 boot map**（包声明问题），不是代码问题。查 §12 的 `__DSH_BOOT__` 检查。
 - 有 `ReferenceError` / `TypeError` → 半边代码在真实环境里抛错，把首行错误贴进 issue。

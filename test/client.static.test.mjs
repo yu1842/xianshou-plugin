@@ -14,10 +14,19 @@ test('加载契约：客户端半边只依赖 react，不引 node 内置模块�
 
 test('加载契约：模块导出 name / inject / apply，符合 Cordis 模块形态', () => {
   assert.match(source, /const name = 'xianshou-console'/);
-  // 不声明服务依赖：Cordis 的 inject 未满足时插件会静默 pending，"没有入口"就变得不可排查
-  assert.match(source, /const inject = \[\];/);
+  // 必须声明 slots：不声明时宿主不给该上下文准备 slots，apply 会跑但注册不上任何槽位
+  assert.match(source, /const inject = \['slots'\];/);
   assert.match(source, /function apply\(ctx\)/);
-  assert.match(source, /module\.exports = \{\s*name,\s*inject,\s*apply/);
+  // 工厂体返回导出对象；裸 module.exports 在浏览器会抛 ReferenceError
+  assert.match(source, /return \{\s*name,\s*inject,\s*apply/);
+});
+
+test('加载契约：浏览器侧必须经 __ModuleLoader__.load 自注册，否则界面静默无入口', () => {
+  assert.match(source, /__ModuleLoader__\.load\(\{\s*id:\s*PLUGIN_ID,\s*factory:\s*build\s*\}\)/);
+  assert.match(source, /const PLUGIN_ID = 'dsh-plugin-xianshou'/);
+  // CJS 回退必须保留：node --test 依赖 require('../client/client.js') 拿到导出
+  assert.match(source, /module\.exports = build\(require\)/);
+  assert.ok(!/^module\.exports = \{/m.test(source), '顶层裸 module.exports 在浏览器会抛 ReferenceError');
 });
 
 test('样式：只消费宿主令牌，且每个令牌都有兜底值（宿主换肤不会变白屏）', () => {

@@ -43,6 +43,24 @@ export { SessionStateRepository } from './adapters/storage/session-state.js';
 export { ResilientRepository } from './adapters/storage/resilient.js';
 export { ConsoleLogger } from './adapters/observability/console-logger.js';
 
+export { PLUGIN_VERSION } from './version.js';
+
+export {
+  ARCHIVE_FORMAT,
+  ARCHIVE_VERSION,
+  createBundle,
+  parseBundle,
+  planMerge,
+  serializeBundle,
+  type ArchiveBundle,
+  type MergePolicy,
+  type MergePlan,
+} from './domain/archive.js';
+export { buildMarkdownReport } from './application/report.js';
+export { FsArtifactStore, MemoryArtifactStore } from './adapters/storage/artifacts.js';
+export { NodeHasher, Fnv1aHasher } from './adapters/hash/sha256.js';
+export type { ArtifactStore, Hasher, WriteResult } from './ports/artifacts.js';
+
 export { VersionGate, type GateResult, type GateVerdict } from './adapters/harness/version-gate.js';
 export { AdapterRegistry } from './adapters/harness/registry.js';
 export { HarnessAdapter, AdapterV0201, AdapterV0300 } from './adapters/harness/adapter.js';

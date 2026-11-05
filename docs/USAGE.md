@@ -127,7 +127,7 @@ dsh web --patch ./cordis.yml
 
 ---
 
-## 4. 九个工具
+## 4. 十一个工具
 
 调用顺序即方案的动作顺序。模型通常会自动调用；你也可以直接要求它调。
 
@@ -142,6 +142,8 @@ dsh web --patch ./cordis.yml
 | `xianshou_recall` | 提交回收答案 | `task_id`、`window`（d24h/d7d）、`answers[3]`、`self_report[3]` |
 | `xianshou_refusal` | 记录采纳/否决 | `task_id`、`suggestion_id`、`decision`（accepted/rejected/partial） |
 | `xianshou_health` | 四指标健康度 | 无 |
+| `xianshou_export` | 导出周报 / 备份 | `format`（markdown/json/both）、`name`、`redact`、`overwrite` |
+| `xianshou_import` | 从备份恢复 | `file`、`mode`（dry-run/merge/overwrite） |
 
 ### 4.1 一次完整对话长什么样
 
@@ -167,6 +169,37 @@ dsh web --patch ./cordis.yml
 ```
 
 24 小时后，插件会推送三个具体问题：核心逻辑是什么、最不确定哪一点、被反问靠什么答。
+
+---
+
+### 4.2 导出与恢复
+
+**导出**（默认写到 `<cwd>/xianshou-export`）：
+
+```text
+xianshou_export(format="both", name="weekly-1106")
+  → weekly-1106.md   可外发的周报（四指标 + 任务明细 + 校验值）
+  → weekly-1106.json 可恢复的完整备份
+```
+
+- 默认**不覆盖**同名文件；要覆盖显式传 `overwrite: true`。
+  这条不是洁癖：备份最常出的事故就是"第二次导出把第一次冲掉"。
+- 要外发时先 `redact: true`：去掉先手稿正文与回收答案原文，**保留结构与全部指标**。
+- 只导 `markdown` 时会明确提示"这不是可恢复的备份"。
+
+**恢复**（默认 dry-run）：
+
+```text
+xianshou_import(file="weekly-1106.json")                  → 只报告会新增/覆盖/跳过几条
+xianshou_import(file="weekly-1106.json", mode="merge")     → 只补缺失，同名跳过
+xianshou_import(file="weekly-1106.json", mode="overwrite") → 备份优先，同名覆盖
+```
+
+- **只增不删**：恢复不会删除当前账本里的任何任务，所以"导错文件"不会毁掉现有的账。
+- 备份文件按字段校验：版本高于插件 → 明确拒绝，不猜着读；JSON 坏了 → 报"不是合法的 JSON"并**不写入任何东西**。
+- `file` 可以写归档目录里的文件名，也可以写绝对路径（恢复旧机器上的备份用）。
+
+**可验证凭据**：报表末尾会写 `sha256(archive.json) = …`。对同名 `.json` 算一次 SHA-256，值一致说明这份备份没被改过。归档文件是可以被编辑的，凭据让"没被改过"可验证 —— 这不是防篡改，是防"你以为是原版"。
 
 ---
 

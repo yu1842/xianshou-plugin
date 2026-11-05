@@ -46,6 +46,13 @@ export interface RecallConfig {
   readonly sweepMinutes: number;
 }
 
+export interface ExportConfig {
+  /** 归档目录；缺省时用 `<cwd>/xianshou-export`。 */
+  readonly directory?: string;
+  /** 导出时是否默认脱敏（去掉先手稿正文与回收答案）。 */
+  readonly redact: boolean;
+}
+
 export interface XianshouConfig {
   readonly gate: GateConfig;
   readonly thresholds: PolicyOverrides;
@@ -53,6 +60,7 @@ export interface XianshouConfig {
   readonly compat: CompatConfig;
   readonly ui: UiConfig;
   readonly recall: RecallConfig;
+  readonly archive: ExportConfig;
 }
 
 export const ENGINE_RANGE = '>=0.2.1-rc.1 <0.3.0';
@@ -74,6 +82,7 @@ export const DEFAULT_CONFIG: XianshouConfig = Object.freeze({
   compat: Object.freeze({ allowUnverified: false, engineRange: ENGINE_RANGE }),
   ui: Object.freeze({ theme: 'auto', verbose: false }),
   recall: Object.freeze({ autoRemind: true, sweepMinutes: 0 }),
+  archive: Object.freeze({ redact: false }),
 });
 
 export interface ConfigParseResult {
@@ -116,6 +125,9 @@ export class ConfigParser {
 
     const autoRemind = pickBoolean(recall?.['autoRemind'], true, 'recall.autoRemind', issues);
     const sweepMinutes = pickNumber(recall?.['sweepMinutes'], 0, 'recall.sweepMinutes', issues);
+    const archive = asObject(root?.['archive']);
+    const archiveDirectory = pickOptionalString(archive?.['directory'], 'archive.directory', issues);
+    const archiveRedact = pickBoolean(archive?.['redact'], DEFAULT_CONFIG.archive.redact, 'archive.redact', issues);
 
     return {
       config: {
@@ -125,6 +137,7 @@ export class ConfigParser {
         compat: { allowUnverified, engineRange },
         ui: { theme, verbose },
         recall: { autoRemind, sweepMinutes: Math.max(0, sweepMinutes) },
+        archive: archiveDirectory === undefined ? { redact: archiveRedact } : { redact: archiveRedact, directory: archiveDirectory },
       },
       issues,
     };

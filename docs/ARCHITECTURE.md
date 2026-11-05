@@ -84,7 +84,7 @@ src/
 ├── capabilities/
 │   ├── Capability.ts         能力基类（依赖声明 + 降级）
 │   ├── GateCapability.ts     先手闸门
-│   ├── ToolsetCapability.ts  九个工具
+│   ├── ToolsetCapability.ts  十一个工具
 │   └── ReminderCapability.ts 到期提醒
 ├── adapters/
 │   ├── harness/
@@ -95,7 +95,8 @@ src/
 │   │   ├── adapter.ts        适配器抽象 + 0.2.x / 0.3.x
 │   │   ├── registry.ts       适配器选择
 │   │   └── tool-encoder.ts   唯一翻译 ToolDefinition 的地方
-│   ├── storage/              memory / file / session-state / resilient / migrating
+│   ├── storage/              memory / file / session-state / resilient / migrating / artifacts
+│   ├── hash/                 SHA-256（导出盖章）
 │   ├── notify/               会话通知器
 │   └── observability/        控制台日志器
 └── ui/
